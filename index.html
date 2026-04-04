@@ -320,9 +320,10 @@ function jump() {
     init();
   }
 }
-document.addEventListener('keydown', e => { if (e.code === 'Space' || e.code === 'ArrowUp') { e.preventDefault(); jump(); }});
-canvas.addEventListener('click', jump);
-canvas.addEventListener('touchstart', e => { e.preventDefault(); jump(); }, { passive: false });
+document.addEventListener('keydown', e => { if (e.code === 'Space' || e.code === 'ArrowUp') { e.preventDefault(); if (controlsDiv.style.display === 'none') jump(); }});
+let usesTouch = false;
+canvas.addEventListener('touchstart', e => { e.preventDefault(); usesTouch = true; jump(); }, { passive: false });
+canvas.addEventListener('click', () => { if (!usesTouch) jump(); });
 
 function update() {
   frameCount++;
@@ -359,11 +360,12 @@ function update() {
     }
     if (p.x + PIPE_WIDTH < -10) pipes.splice(i, 1);
   }
-  const bx = bird.x, by = bird.y;
+  const bx = bird.x;
   const brx = BIRD_SIZE * 0.75;
   const bry = BIRD_SIZE * 0.6;
   // Clamp bird to top of screen instead of instant death
   if (bird.y - bry < 0) { bird.y = bry; bird.vy = 0; }
+  const by = bird.y;
   if (by + bry > H - GROUND_H) { die(); return; }
   for (const p of pipes) {
     if (bx + brx > p.x && bx - brx < p.x + PIPE_WIDTH) {
@@ -598,9 +600,11 @@ function drawBird() {
   dc.fillStyle = sk.pupil;
   bpx(S * 0.2 + 8, -S * 0.6 + 4, 6, 6);
 
-  // Pupil highlight
-  dc.fillStyle = '#fff';
-  bpx(S * 0.2 + 10, -S * 0.6 + 4, 2, 2);
+  // Pupil highlight (skip on dark eyes)
+  if (sk.eye !== '#222') {
+    dc.fillStyle = '#fff';
+    bpx(S * 0.2 + 10, -S * 0.6 + 4, 2, 2);
+  }
 
   // Beak
   dc.fillStyle = sk.beak;
@@ -624,8 +628,9 @@ function drawGround() {
   ctx.fillStyle = '#4a9e4a';
   ctx.fillRect(0, groundTop + 4, W, 2);
   // Light green grass highlights
+  const gx = Math.floor(groundX);
   ctx.fillStyle = '#6ed66e';
-  for (let x = Math.floor(groundX) % 6; x < W; x += 6) {
+  for (let x = ((gx % 6) + 6) % 6 - 6; x < W; x += 6) {
     px(x, groundTop, 3, 2);
   }
   // Sandy ground
@@ -633,20 +638,20 @@ function drawGround() {
   ctx.fillRect(0, groundTop + 6, W, GROUND_H - 6);
   // Dirt pattern
   ctx.fillStyle = '#c49640';
-  for (let x = Math.floor(groundX) % 12; x < W + 12; x += 12) {
+  for (let x = ((gx % 12) + 12) % 12 - 12; x < W + 12; x += 12) {
     px(x, groundTop + 10, 6, 2);
     px(x + 6, groundTop + 18, 6, 2);
     px(x + 3, groundTop + 26, 4, 2);
   }
   // Dark dirt spots
   ctx.fillStyle = '#b08530';
-  for (let x = Math.floor(groundX) % 18; x < W + 18; x += 18) {
+  for (let x = ((gx % 18) + 18) % 18 - 18; x < W + 18; x += 18) {
     px(x + 2, groundTop + 14, 3, 2);
     px(x + 10, groundTop + 22, 2, 2);
   }
   // Pebbles
   ctx.fillStyle = '#bfa050';
-  for (let x = Math.floor(groundX) % 24; x < W + 24; x += 24) {
+  for (let x = ((gx % 24) + 24) % 24 - 24; x < W + 24; x += 24) {
     px(x + 5, groundTop + 30, 2, 1);
     px(x + 15, groundTop + 34, 1, 1);
   }
@@ -699,7 +704,8 @@ function drawGameOver() {
   dc.fillStyle = 'rgba(0,0,0,0.35)';
   dc.fillRect(0, 0, W * SCALE, H * SCALE);
   const pw = 280, ph = 200;
-  const ppx = (W * SCALE - pw) / 2, py = cy - ph / 2 - 20;
+  const ppx = (W * SCALE - pw) / 2;
+  const py = Math.max(10, Math.min(cy - ph / 2 - 20, H * SCALE - ph - 10));
   // Panel
   dc.fillStyle = '#dec076';
   dc.strokeStyle = '#8b6914';
