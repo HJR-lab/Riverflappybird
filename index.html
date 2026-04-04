@@ -32,6 +32,9 @@ canvas {
   z-index: 10;
   user-select: none;
   -webkit-user-select: none;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 #controls label {
   display: block;
@@ -63,9 +66,10 @@ canvas {
 }
 #skinSelector {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   margin-top: 6px;
   flex-wrap: wrap;
+  max-width: 260px;
 }
 .skin-btn {
   width: 36px;
@@ -202,7 +206,12 @@ function drawSkinPreview(skinIdx, cvs) {
     pc.strokeStyle = '#f5c542';
     pc.lineWidth = 1.5;
     pc.beginPath();
-    pc.ellipse(cx, cy - 10, 7, 2.5, 0, 0, Math.PI * 2);
+    if (pc.ellipse) {
+      pc.ellipse(cx, cy - 10, 7, 2.5, 0, 0, Math.PI * 2);
+    } else {
+      pc.save(); pc.translate(cx, cy - 10); pc.scale(1, 2.5 / 7);
+      pc.arc(0, 0, 7, 0, Math.PI * 2); pc.restore();
+    }
     pc.stroke();
   }
   if (locked) {
@@ -629,15 +638,28 @@ function drawBird() {
 
   // Golden halo for Angel skin
   if (sk.halo) {
+    const haloY = -S * 0.7 - 10;
+    const haloRX = S * 0.9;
+    const haloRY = 4;
     dc.strokeStyle = '#f5c542';
     dc.lineWidth = 3;
     dc.beginPath();
-    dc.ellipse(0, -S * 0.7 - 10, S * 0.9, 4, 0, 0, Math.PI * 2);
+    if (dc.ellipse) {
+      dc.ellipse(0, haloY, haloRX, haloRY, 0, 0, Math.PI * 2);
+    } else {
+      dc.save(); dc.translate(0, haloY); dc.scale(1, haloRY / haloRX);
+      dc.arc(0, 0, haloRX, 0, Math.PI * 2); dc.restore();
+    }
     dc.stroke();
     dc.strokeStyle = '#ffe082';
     dc.lineWidth = 1.5;
     dc.beginPath();
-    dc.ellipse(0, -S * 0.7 - 10, S * 0.9, 4, 0, 0, Math.PI * 2);
+    if (dc.ellipse) {
+      dc.ellipse(0, haloY, haloRX, haloRY, 0, 0, Math.PI * 2);
+    } else {
+      dc.save(); dc.translate(0, haloY); dc.scale(1, haloRY / haloRX);
+      dc.arc(0, 0, haloRX, 0, Math.PI * 2); dc.restore();
+    }
     dc.stroke();
   }
 
