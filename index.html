@@ -169,33 +169,71 @@ function drawBird() {
   ctx.save();
   ctx.translate(bird.x, bird.y);
   ctx.rotate((bird.rotation * Math.PI) / 180);
-  const wingOffset = bird.flapFrame > 0 ? -6 : Math.sin(frameCount * 0.15) * 3;
-  ctx.fillStyle = '#f5c542';
+  const S = BIRD_SIZE;
+  const wingY = bird.flapFrame > 0 ? -7 : Math.sin(frameCount * 0.15) * 3;
+  // Dark outline body
+  ctx.fillStyle = '#543847';
   ctx.beginPath();
-  ctx.ellipse(0, 0, BIRD_SIZE, BIRD_SIZE * 0.8, 0, 0, Math.PI * 2);
+  ctx.ellipse(0, 0, S + 3, S * 0.85 + 3, 0, 0, Math.PI * 2);
   ctx.fill();
-  ctx.strokeStyle = '#c49a1a';
-  ctx.lineWidth = 1.5;
+  // Main body - orange/yellow
+  ctx.fillStyle = '#f5a623';
+  ctx.beginPath();
+  ctx.ellipse(0, 0, S, S * 0.85, 0, 0, Math.PI * 2);
+  ctx.fill();
+  // Lighter yellow belly/top
+  ctx.fillStyle = '#f7c948';
+  ctx.beginPath();
+  ctx.ellipse(-2, -4, S * 0.65, S * 0.5, 0, 0, Math.PI * 2);
+  ctx.fill();
+  // Red/orange chest stripe
+  ctx.fillStyle = '#e84430';
+  ctx.beginPath();
+  ctx.ellipse(4, 4, S * 0.75, S * 0.3, 0, 0, Math.PI * 2);
+  ctx.fill();
+  // Dark outline for stripe
+  ctx.strokeStyle = '#543847';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.ellipse(4, 4, S * 0.75, S * 0.3, 0, 0, Math.PI * 2);
   ctx.stroke();
-  ctx.fillStyle = '#e8b730';
+  // Wing - white with dark outline
+  ctx.fillStyle = '#fff';
+  ctx.strokeStyle = '#543847';
+  ctx.lineWidth = 2;
   ctx.beginPath();
-  ctx.ellipse(-4, wingOffset, 10, 6, -0.3, 0, Math.PI * 2);
+  ctx.ellipse(-6, wingY, 9, 6, -0.2, 0, Math.PI * 2);
   ctx.fill();
+  ctx.stroke();
+  // Eye white - large
   ctx.fillStyle = '#fff';
   ctx.beginPath();
-  ctx.arc(8, -5, 6, 0, Math.PI * 2);
+  ctx.arc(10, -5, 8, 0, Math.PI * 2);
   ctx.fill();
+  ctx.strokeStyle = '#543847';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  // Pupil
   ctx.fillStyle = '#111';
   ctx.beginPath();
-  ctx.arc(10, -5, 3, 0, Math.PI * 2);
+  ctx.arc(13, -5, 4, 0, Math.PI * 2);
   ctx.fill();
-  ctx.fillStyle = '#e8452e';
+  // Pupil highlight
+  ctx.fillStyle = '#fff';
   ctx.beginPath();
-  ctx.moveTo(14, 0);
-  ctx.lineTo(24, 3);
-  ctx.lineTo(14, 6);
+  ctx.arc(14, -7, 1.5, 0, Math.PI * 2);
+  ctx.fill();
+  // Beak - orange
+  ctx.fillStyle = '#f5a623';
+  ctx.strokeStyle = '#543847';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(16, -1);
+  ctx.lineTo(28, 2);
+  ctx.lineTo(16, 5);
   ctx.closePath();
   ctx.fill();
+  ctx.stroke();
   ctx.restore();
 }
 function drawGround() {
