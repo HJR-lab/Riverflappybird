@@ -154,17 +154,22 @@ jumpSlider.addEventListener('input', () => {
 
 // Bird skins
 const SKINS = [
-  { name: 'Classic', outline: '#543847', body: '#f5a623', top: '#f7c948', stripe: '#e84430', stripeDark: '#c43020', wing: '#fff', eye: '#fff', pupil: '#111', beak: '#f5a623', beakLine: '#c43020' },
-  { name: 'Blue Jay', outline: '#1a2a4a', body: '#3b7dd8', top: '#5a9de8', stripe: '#fff', stripeDark: '#ddd', wing: '#1a3a6a', eye: '#fff', pupil: '#111', beak: '#333', beakLine: '#111' },
-  { name: 'Robin', outline: '#3a2020', body: '#8b5e3c', top: '#a67c52', stripe: '#e85830', stripeDark: '#c44020', wing: '#6b4e2c', eye: '#fff', pupil: '#111', beak: '#f5a623', beakLine: '#c49000' },
-  { name: 'Parrot', outline: '#1a3a1a', body: '#2ecc40', top: '#5efc70', stripe: '#e84430', stripeDark: '#c43020', wing: '#1a8a2e', eye: '#fff', pupil: '#111', beak: '#f7c948', beakLine: '#e8a820' },
-  { name: 'Snow', outline: '#556', body: '#e8e8f0', top: '#fff', stripe: '#aab', stripeDark: '#889', wing: '#fff', eye: '#eef', pupil: '#334', beak: '#f5a623', beakLine: '#c49000' },
-  { name: 'Phoenix', outline: '#4a1a0a', body: '#e84430', top: '#f5a623', stripe: '#ffe066', stripeDark: '#f5a623', wing: '#f7c948', eye: '#fff', pupil: '#111', beak: '#f5a623', beakLine: '#c43020' },
-  { name: 'Purple', outline: '#2a1a3a', body: '#9b59b6', top: '#c39bd3', stripe: '#e8d5f0', stripeDark: '#c9a8d8', wing: '#d2b4de', eye: '#fff', pupil: '#111', beak: '#f5c542', beakLine: '#d4a020' },
-  { name: 'Gold', outline: '#5a4010', body: '#f7c948', top: '#ffe082', stripe: '#e8a820', stripeDark: '#c49000', wing: '#fff4a3', eye: '#fff', pupil: '#4a3000', beak: '#e8a820', beakLine: '#c49000' },
-  { name: 'Dark Knight', outline: '#000', body: '#1a1a1a', top: '#2a2a2a', stripe: '#333', stripeDark: '#222', wing: '#111', eye: '#222', pupil: '#cc0000', beak: '#333', beakLine: '#111' },
+  { name: 'Classic', unlock: 0, outline: '#543847', body: '#f5a623', top: '#f7c948', stripe: '#e84430', stripeDark: '#c43020', wing: '#fff', eye: '#fff', pupil: '#111', beak: '#f5a623', beakLine: '#c43020' },
+  { name: 'Blue Jay', unlock: 5, outline: '#1a2a4a', body: '#3b7dd8', top: '#5a9de8', stripe: '#fff', stripeDark: '#ddd', wing: '#1a3a6a', eye: '#fff', pupil: '#111', beak: '#333', beakLine: '#111' },
+  { name: 'Robin', unlock: 10, outline: '#3a2020', body: '#8b5e3c', top: '#a67c52', stripe: '#e85830', stripeDark: '#c44020', wing: '#6b4e2c', eye: '#fff', pupil: '#111', beak: '#f5a623', beakLine: '#c49000' },
+  { name: 'Parrot', unlock: 15, outline: '#1a3a1a', body: '#2ecc40', top: '#5efc70', stripe: '#e84430', stripeDark: '#c43020', wing: '#1a8a2e', eye: '#fff', pupil: '#111', beak: '#f7c948', beakLine: '#e8a820' },
+  { name: 'Snow', unlock: 20, outline: '#556', body: '#e8e8f0', top: '#fff', stripe: '#aab', stripeDark: '#889', wing: '#fff', eye: '#eef', pupil: '#334', beak: '#f5a623', beakLine: '#c49000' },
+  { name: 'Phoenix', unlock: 25, outline: '#4a1a0a', body: '#e84430', top: '#f5a623', stripe: '#ffe066', stripeDark: '#f5a623', wing: '#f7c948', eye: '#fff', pupil: '#111', beak: '#f5a623', beakLine: '#c43020' },
+  { name: 'Purple', unlock: 30, outline: '#2a1a3a', body: '#9b59b6', top: '#c39bd3', stripe: '#e8d5f0', stripeDark: '#c9a8d8', wing: '#d2b4de', eye: '#fff', pupil: '#111', beak: '#f5c542', beakLine: '#d4a020' },
+  { name: 'Gold', unlock: 50, outline: '#5a4010', body: '#f7c948', top: '#ffe082', stripe: '#e8a820', stripeDark: '#c49000', wing: '#fff4a3', eye: '#fff', pupil: '#4a3000', beak: '#e8a820', beakLine: '#c49000' },
+  { name: 'Dark Knight', unlock: 100, outline: '#000', body: '#1a1a1a', top: '#2a2a2a', stripe: '#333', stripeDark: '#222', wing: '#111', eye: '#222', pupil: '#cc0000', beak: '#333', beakLine: '#111' },
 ];
 let currentSkin = 0;
+let totalPipes = parseInt(localStorage.getItem('flappyTotalPipes') || '0');
+
+function isSkinUnlocked(i) {
+  return totalPipes >= SKINS[i].unlock;
+}
 
 // Build skin preview buttons
 const skinSelector = document.getElementById('skinSelector');
@@ -174,35 +179,58 @@ function drawSkinPreview(skinIdx, cvs) {
   const sz = 36;
   cvs.width = sz; cvs.height = sz;
   pc.clearRect(0, 0, sz, sz);
+  const locked = !isSkinUnlocked(skinIdx);
   // Mini bird preview
   const cx = 16, cy = 18;
-  pc.fillStyle = s.outline;
+  pc.fillStyle = locked ? '#333' : s.outline;
   pc.fillRect(cx - 9, cy - 7, 18, 14);
-  pc.fillStyle = s.body;
+  pc.fillStyle = locked ? '#444' : s.body;
   pc.fillRect(cx - 8, cy - 6, 16, 12);
-  pc.fillStyle = s.top;
+  pc.fillStyle = locked ? '#4a4a4a' : s.top;
   pc.fillRect(cx - 7, cy - 6, 14, 5);
-  pc.fillStyle = s.stripe;
+  pc.fillStyle = locked ? '#3a3a3a' : s.stripe;
   pc.fillRect(cx - 6, cy + 2, 12, 3);
-  pc.fillStyle = s.wing;
+  pc.fillStyle = locked ? '#555' : s.wing;
   pc.fillRect(cx - 7, cy - 3, 8, 5);
-  pc.fillStyle = s.eye;
+  pc.fillStyle = locked ? '#555' : s.eye;
   pc.fillRect(cx + 3, cy - 5, 6, 6);
-  pc.fillStyle = s.pupil;
+  pc.fillStyle = locked ? '#333' : s.pupil;
   pc.fillRect(cx + 6, cy - 4, 3, 3);
-  pc.fillStyle = s.beak;
+  pc.fillStyle = locked ? '#444' : s.beak;
   pc.fillRect(cx + 10, cy - 2, 5, 4);
+  if (locked) {
+    pc.fillStyle = 'rgba(0,0,0,0.5)';
+    pc.fillRect(0, 0, sz, sz);
+    pc.fillStyle = '#fff';
+    pc.font = 'bold 9px monospace';
+    pc.textAlign = 'center';
+    pc.fillText(s.unlock, 18, 32);
+  }
+}
+
+function refreshSkinButtons() {
+  const btns = skinSelector.querySelectorAll('.skin-btn');
+  btns.forEach((btn, i) => {
+    const cvs = btn.querySelector('canvas');
+    drawSkinPreview(i, cvs);
+    if (!isSkinUnlocked(i) && btn.classList.contains('active')) {
+      btn.classList.remove('active');
+      currentSkin = 0;
+      btns[0].classList.add('active');
+    }
+  });
 }
 
 SKINS.forEach((s, i) => {
   const btn = document.createElement('div');
   btn.className = 'skin-btn' + (i === 0 ? ' active' : '');
-  btn.title = s.name;
+  btn.title = s.name + (s.unlock > 0 ? ' (unlock at ' + s.unlock + ' pipes)' : '');
   const cvs = document.createElement('canvas');
   drawSkinPreview(i, cvs);
   btn.appendChild(cvs);
   btn.addEventListener('click', (e) => {
     e.stopPropagation();
+    if (!isSkinUnlocked(i)) return;
     currentSkin = i;
     skinSelector.querySelectorAll('.skin-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
@@ -346,10 +374,13 @@ function update() {
 function die() {
   gameState = 'dead';
   frameCount = 0;
+  totalPipes += score;
+  localStorage.setItem('flappyTotalPipes', totalPipes);
   if (score > bestScore) {
     bestScore = score;
     localStorage.setItem('flappyBest', bestScore);
   }
+  refreshSkinButtons();
 }
 
 function drawSky() {
@@ -702,12 +733,15 @@ function drawGameOver() {
   dc.fillText('Game Over', cx, py + 50);
   dc.font = '24px "Segoe UI", system-ui, sans-serif';
   dc.fillStyle = '#333';
-  dc.fillText('Score: ' + score, cx, py + 95);
+  dc.fillText('Score: ' + score, cx, py + 85);
   dc.fillStyle = '#8b6914';
-  dc.fillText('Best: ' + bestScore, cx, py + 130);
+  dc.fillText('Best: ' + bestScore, cx, py + 115);
+  dc.font = '16px "Segoe UI", system-ui, sans-serif';
+  dc.fillStyle = '#6a5a20';
+  dc.fillText('Total Pipes: ' + totalPipes, cx, py + 142);
   dc.font = '18px "Segoe UI", system-ui, sans-serif';
   dc.fillStyle = '#555';
-  dc.fillText('Tap to restart', cx, py + 170);
+  dc.fillText('Tap to restart', cx, py + 175);
 }
 
 function draw() {
