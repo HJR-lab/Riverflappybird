@@ -243,6 +243,12 @@ const PIPE_WIDTH = 30;
 const PIPE_SPACING = 110;
 const GROUND_H = 40;
 const BIRD_SIZE = 10;
+// One-time reset: clear old scores for skin unlock rebalance
+if (!localStorage.getItem('flappyScoreReset1')) {
+  localStorage.setItem('flappyBest', '0');
+  localStorage.removeItem('flappyTotalPipes');
+  localStorage.setItem('flappyScoreReset1', '1');
+}
 bestScore = parseInt(localStorage.getItem('flappyBest') || '0');
 
 // Seeded random for consistent background elements
