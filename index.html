@@ -61,6 +61,30 @@ canvas {
   font-size: 14px;
   cursor: pointer;
 }
+#skinSelector {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+.skin-btn {
+  width: 36px;
+  height: 36px;
+  border: 2px solid #555;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  background: #222;
+}
+.skin-btn.active {
+  border-color: #ffe082;
+  box-shadow: 0 0 6px #ffe082;
+}
+.skin-btn canvas {
+  width: 100%;
+  height: 100%;
+  border-radius: 4px;
+}
 </style>
 </head>
 <body>
@@ -68,7 +92,9 @@ canvas {
 <div id="controls" style="display:none;">
   <label>Gravity: <input type="range" id="gravitySlider" min="0.05" max="0.60" step="0.01" value="0.25"> <span id="gravityVal">0.25</span></label>
   <label>Jump: <input type="range" id="jumpSlider" min="-8.00" max="-1.00" step="0.1" value="-3.00"> <span id="jumpVal">-3.00</span></label>
-  <button id="closeControls" style="margin-top:4px;background:#555;color:#fff;border:none;border-radius:4px;padding:4px 10px;cursor:pointer;">Close</button>
+  <div style="margin-top:6px;font-size:13px;color:#ccc;">Skin:</div>
+  <div id="skinSelector"></div>
+  <button id="closeControls" style="margin-top:8px;background:#555;color:#fff;border:none;border-radius:4px;padding:4px 10px;cursor:pointer;">Close</button>
 </div>
 <canvas id="game"></canvas>
 <script>
@@ -124,6 +150,64 @@ gravitySlider.addEventListener('input', () => {
 jumpSlider.addEventListener('input', () => {
   JUMP = parseFloat(jumpSlider.value);
   jumpVal.textContent = JUMP.toFixed(1);
+});
+
+// Bird skins
+const SKINS = [
+  { name: 'Classic', outline: '#543847', body: '#f5a623', top: '#f7c948', stripe: '#e84430', stripeDark: '#c43020', wing: '#fff', eye: '#fff', pupil: '#111', beak: '#f5a623', beakLine: '#c43020' },
+  { name: 'Blue Jay', outline: '#1a2a4a', body: '#3b7dd8', top: '#5a9de8', stripe: '#fff', stripeDark: '#ddd', wing: '#1a3a6a', eye: '#fff', pupil: '#111', beak: '#333', beakLine: '#111' },
+  { name: 'Robin', outline: '#3a2020', body: '#8b5e3c', top: '#a67c52', stripe: '#e85830', stripeDark: '#c44020', wing: '#6b4e2c', eye: '#fff', pupil: '#111', beak: '#f5a623', beakLine: '#c49000' },
+  { name: 'Parrot', outline: '#1a3a1a', body: '#2ecc40', top: '#5efc70', stripe: '#e84430', stripeDark: '#c43020', wing: '#1a8a2e', eye: '#fff', pupil: '#111', beak: '#f7c948', beakLine: '#e8a820' },
+  { name: 'Snow', outline: '#556', body: '#e8e8f0', top: '#fff', stripe: '#aab', stripeDark: '#889', wing: '#fff', eye: '#eef', pupil: '#334', beak: '#f5a623', beakLine: '#c49000' },
+  { name: 'Phoenix', outline: '#4a1a0a', body: '#e84430', top: '#f5a623', stripe: '#ffe066', stripeDark: '#f5a623', wing: '#f7c948', eye: '#fff', pupil: '#111', beak: '#f5a623', beakLine: '#c43020' },
+  { name: 'Purple', outline: '#2a1a3a', body: '#9b59b6', top: '#c39bd3', stripe: '#e8d5f0', stripeDark: '#c9a8d8', wing: '#d2b4de', eye: '#fff', pupil: '#111', beak: '#f5c542', beakLine: '#d4a020' },
+  { name: 'Gold', outline: '#5a4010', body: '#f7c948', top: '#ffe082', stripe: '#e8a820', stripeDark: '#c49000', wing: '#fff4a3', eye: '#fff', pupil: '#4a3000', beak: '#e8a820', beakLine: '#c49000' },
+];
+let currentSkin = 0;
+
+// Build skin preview buttons
+const skinSelector = document.getElementById('skinSelector');
+function drawSkinPreview(skinIdx, cvs) {
+  const s = SKINS[skinIdx];
+  const pc = cvs.getContext('2d');
+  const sz = 36;
+  cvs.width = sz; cvs.height = sz;
+  pc.clearRect(0, 0, sz, sz);
+  // Mini bird preview
+  const cx = 16, cy = 18;
+  pc.fillStyle = s.outline;
+  pc.fillRect(cx - 9, cy - 7, 18, 14);
+  pc.fillStyle = s.body;
+  pc.fillRect(cx - 8, cy - 6, 16, 12);
+  pc.fillStyle = s.top;
+  pc.fillRect(cx - 7, cy - 6, 14, 5);
+  pc.fillStyle = s.stripe;
+  pc.fillRect(cx - 6, cy + 2, 12, 3);
+  pc.fillStyle = s.wing;
+  pc.fillRect(cx - 7, cy - 3, 8, 5);
+  pc.fillStyle = s.eye;
+  pc.fillRect(cx + 3, cy - 5, 6, 6);
+  pc.fillStyle = s.pupil;
+  pc.fillRect(cx + 6, cy - 4, 3, 3);
+  pc.fillStyle = s.beak;
+  pc.fillRect(cx + 10, cy - 2, 5, 4);
+}
+
+SKINS.forEach((s, i) => {
+  const btn = document.createElement('div');
+  btn.className = 'skin-btn' + (i === 0 ? ' active' : '');
+  btn.title = s.name;
+  const cvs = document.createElement('canvas');
+  drawSkinPreview(i, cvs);
+  btn.appendChild(cvs);
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    currentSkin = i;
+    skinSelector.querySelectorAll('.skin-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+  btn.addEventListener('touchstart', (e) => e.stopPropagation());
+  skinSelector.appendChild(btn);
 });
 const PIPE_SPEED = 1.3;
 const PIPE_GAP = 75;
@@ -430,6 +514,7 @@ function drawPipe(p) {
 // Bird drawn on displayCtx at full resolution for crisp visibility
 function drawBird() {
   const dc = displayCtx;
+  const sk = SKINS[currentSkin];
   dc.save();
   dc.translate(Math.floor(bird.x * SCALE), Math.floor(bird.y * SCALE));
   const rot = bird.rotation * Math.PI / 180;
@@ -442,62 +527,57 @@ function drawBird() {
   }
 
   // Dark outline
-  dc.fillStyle = '#543847';
+  dc.fillStyle = sk.outline;
   bpx(-S - 2, -S * 0.7 - 2, S * 2 + 4, S * 1.4 + 4);
 
-  // Body - orange
-  dc.fillStyle = '#f5a623';
+  // Body
+  dc.fillStyle = sk.body;
   bpx(-S, -S * 0.7, S * 2, S * 1.4);
 
-  // Yellow top
-  dc.fillStyle = '#f7c948';
+  // Top highlight
+  dc.fillStyle = sk.top;
   bpx(-S + 2, -S * 0.7, S * 2 - 4, S * 0.7);
 
-  // Red chest stripe
-  dc.fillStyle = '#e84430';
+  // Chest stripe
+  dc.fillStyle = sk.stripe;
   bpx(-S + 4, S * 0.2, S * 1.6, 6);
-  // Darker red edge
-  dc.fillStyle = '#c43020';
+  dc.fillStyle = sk.stripeDark;
   bpx(-S + 4, S * 0.2 + 6, S * 1.6, 2);
 
-  // Wing - white
-  dc.fillStyle = '#fff';
+  // Wing
+  dc.fillStyle = sk.wing;
   bpx(-S + 2, wingY - 4, 16, 10);
-  // Wing outline
-  dc.fillStyle = '#543847';
+  dc.fillStyle = sk.outline;
   bpx(-S + 2, wingY - 6, 16, 2);
   bpx(-S + 2, wingY + 6, 16, 2);
   bpx(-S, wingY - 4, 2, 10);
   bpx(-S + 18, wingY - 4, 2, 10);
 
-  // Eye white - large
-  dc.fillStyle = '#fff';
+  // Eye
+  dc.fillStyle = sk.eye;
   bpx(S * 0.2, -S * 0.6, 14, 14);
-  // Eye outline
-  dc.fillStyle = '#543847';
+  dc.fillStyle = sk.outline;
   bpx(S * 0.2, -S * 0.6 - 2, 14, 2);
   bpx(S * 0.2, -S * 0.6 + 14, 14, 2);
   bpx(S * 0.2 - 2, -S * 0.6, 2, 14);
   bpx(S * 0.2 + 14, -S * 0.6, 2, 14);
 
   // Pupil
-  dc.fillStyle = '#111';
+  dc.fillStyle = sk.pupil;
   bpx(S * 0.2 + 8, -S * 0.6 + 4, 6, 6);
 
   // Pupil highlight
   dc.fillStyle = '#fff';
   bpx(S * 0.2 + 10, -S * 0.6 + 4, 2, 2);
 
-  // Beak - orange
-  dc.fillStyle = '#f5a623';
+  // Beak
+  dc.fillStyle = sk.beak;
   bpx(S + 2, -4, 12, 8);
-  // Beak outline
-  dc.fillStyle = '#543847';
+  dc.fillStyle = sk.outline;
   bpx(S + 2, -6, 12, 2);
   bpx(S + 2, 4, 12, 2);
   bpx(S + 14, -4, 2, 8);
-  // Beak line
-  dc.fillStyle = '#c43020';
+  dc.fillStyle = sk.beakLine;
   bpx(S + 2, 0, 12, 2);
 
   dc.restore();
