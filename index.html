@@ -163,6 +163,7 @@ const SKINS = [
   { name: 'Purple', unlock: 30, outline: '#2a1a3a', body: '#9b59b6', top: '#c39bd3', stripe: '#e8d5f0', stripeDark: '#c9a8d8', wing: '#d2b4de', eye: '#fff', pupil: '#111', beak: '#f5c542', beakLine: '#d4a020' },
   { name: 'Gold', unlock: 50, outline: '#5a4010', body: '#f7c948', top: '#ffe082', stripe: '#e8a820', stripeDark: '#c49000', wing: '#fff4a3', eye: '#fff', pupil: '#4a3000', beak: '#e8a820', beakLine: '#c49000' },
   { name: 'Dark Knight', unlock: 100, outline: '#000', body: '#1a1a1a', top: '#2a2a2a', stripe: '#333', stripeDark: '#222', wing: '#111', eye: '#222', pupil: '#cc0000', beak: '#333', beakLine: '#111' },
+  { name: 'Angel', unlock: 200, halo: true, outline: '#8a7a50', body: '#f0ece0', top: '#fff', stripe: '#e8dcc8', stripeDark: '#d8ccb0', wing: '#fff', eye: '#fff', pupil: '#5a4a30', beak: '#f5c542', beakLine: '#d4a020' },
 ];
 let currentSkin = 0;
 
@@ -197,6 +198,13 @@ function drawSkinPreview(skinIdx, cvs) {
   pc.fillRect(cx + 6, cy - 4, 3, 3);
   pc.fillStyle = locked ? '#444' : s.beak;
   pc.fillRect(cx + 10, cy - 2, 5, 4);
+  if (s.halo && !locked) {
+    pc.strokeStyle = '#f5c542';
+    pc.lineWidth = 1.5;
+    pc.beginPath();
+    pc.ellipse(cx, cy - 10, 7, 2.5, 0, 0, Math.PI * 2);
+    pc.stroke();
+  }
   if (locked) {
     pc.fillStyle = 'rgba(0,0,0,0.5)';
     pc.fillRect(0, 0, sz, sz);
@@ -618,6 +626,20 @@ function drawBird() {
   bpx(S + 14, -4, 2, 8);
   dc.fillStyle = sk.beakLine;
   bpx(S + 2, 0, 12, 2);
+
+  // Golden halo for Angel skin
+  if (sk.halo) {
+    dc.strokeStyle = '#f5c542';
+    dc.lineWidth = 3;
+    dc.beginPath();
+    dc.ellipse(0, -S * 0.7 - 10, S * 0.9, 4, 0, 0, Math.PI * 2);
+    dc.stroke();
+    dc.strokeStyle = '#ffe082';
+    dc.lineWidth = 1.5;
+    dc.beginPath();
+    dc.ellipse(0, -S * 0.7 - 10, S * 0.9, 4, 0, 0, Math.PI * 2);
+    dc.stroke();
+  }
 
   dc.restore();
 }
