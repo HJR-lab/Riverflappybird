@@ -136,7 +136,7 @@ function update() {
   frameCount++;
   if (gameState === 'ready') {
     bird.y = H / 2 + Math.sin(frameCount * 0.08) * 5;
-    groundX = (groundX - 0.5) % 12;
+    groundX = ((groundX - 0.5) % 12 + 12) % 12;
     return;
   }
   if (gameState === 'dead') {
@@ -151,9 +151,9 @@ function update() {
   }
   bird.vy += GRAVITY;
   bird.y += bird.vy;
-  bird.rotation = Math.min(bird.vy * 3, 80);
+  bird.rotation = Math.max(-25, Math.min(bird.vy * 3, 80));
   if (bird.flapFrame > 0) bird.flapFrame--;
-  groundX = (groundX - PIPE_SPEED) % 12;
+  groundX = ((groundX - PIPE_SPEED) % 12 + 12) % 12;
   if (pipes.length === 0 || pipes[pipes.length - 1].x < W - PIPE_SPACING) {
     spawnPipe(pipes.length === 0 ? W + 50 : pipes[pipes.length - 1].x + PIPE_SPACING);
   }
@@ -170,7 +170,9 @@ function update() {
   const bx = bird.x, by = bird.y;
   const brx = BIRD_SIZE * 0.75;
   const bry = BIRD_SIZE * 0.6;
-  if (by + bry > H - GROUND_H || by - bry < 0) { die(); return; }
+  // Clamp bird to top of screen instead of instant death
+  if (bird.y - bry < 0) { bird.y = bry; bird.vy = 0; }
+  if (by + bry > H - GROUND_H) { die(); return; }
   for (const p of pipes) {
     if (bx + brx > p.x && bx - brx < p.x + PIPE_WIDTH) {
       if (by - bry < p.topH || by + bry > p.topH + PIPE_GAP) { die(); return; }
@@ -512,7 +514,22 @@ function drawGameOver() {
   dc.strokeStyle = '#8b6914';
   dc.lineWidth = 4;
   dc.beginPath();
-  dc.roundRect(ppx, py, pw, ph, 10);
+  // roundRect polyfill for older Safari
+  if (dc.roundRect) {
+    dc.roundRect(ppx, py, pw, ph, 10);
+  } else {
+    const r = 10;
+    dc.moveTo(ppx + r, py);
+    dc.lineTo(ppx + pw - r, py);
+    dc.quadraticCurveTo(ppx + pw, py, ppx + pw, py + r);
+    dc.lineTo(ppx + pw, py + ph - r);
+    dc.quadraticCurveTo(ppx + pw, py + ph, ppx + pw - r, py + ph);
+    dc.lineTo(ppx + r, py + ph);
+    dc.quadraticCurveTo(ppx, py + ph, ppx, py + ph - r);
+    dc.lineTo(ppx, py + r);
+    dc.quadraticCurveTo(ppx, py, ppx + r, py);
+    dc.closePath();
+  }
   dc.fill();
   dc.stroke();
 
