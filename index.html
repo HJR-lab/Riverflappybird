@@ -165,10 +165,9 @@ const SKINS = [
   { name: 'Dark Knight', unlock: 100, outline: '#000', body: '#1a1a1a', top: '#2a2a2a', stripe: '#333', stripeDark: '#222', wing: '#111', eye: '#222', pupil: '#cc0000', beak: '#333', beakLine: '#111' },
 ];
 let currentSkin = 0;
-let totalPipes = parseInt(localStorage.getItem('flappyTotalPipes') || '0');
 
 function isSkinUnlocked(i) {
-  return totalPipes >= SKINS[i].unlock;
+  return bestScore >= SKINS[i].unlock;
 }
 
 // Build skin preview buttons
@@ -376,8 +375,6 @@ function update() {
 function die() {
   gameState = 'dead';
   frameCount = 0;
-  totalPipes += score;
-  localStorage.setItem('flappyTotalPipes', totalPipes);
   if (score > bestScore) {
     bestScore = score;
     localStorage.setItem('flappyBest', bestScore);
@@ -742,12 +739,9 @@ function drawGameOver() {
   dc.fillText('Score: ' + score, cx, py + 85);
   dc.fillStyle = '#8b6914';
   dc.fillText('Best: ' + bestScore, cx, py + 115);
-  dc.font = '16px "Segoe UI", system-ui, sans-serif';
-  dc.fillStyle = '#6a5a20';
-  dc.fillText('Total Pipes: ' + totalPipes, cx, py + 142);
   dc.font = '18px "Segoe UI", system-ui, sans-serif';
   dc.fillStyle = '#555';
-  dc.fillText('Tap to restart', cx, py + 175);
+  dc.fillText('Tap to restart', cx, py + 155);
 }
 
 function draw() {
