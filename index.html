@@ -454,65 +454,78 @@ function drawGround() {
   }
 }
 
+// All text drawing uses displayCtx (full resolution) for crisp readability
 function drawScore() {
   if (scoreFlash > 0) scoreFlash--;
-  ctx.fillStyle = scoreFlash > 0 ? '#ffe082' : '#fff';
-  ctx.strokeStyle = '#333';
-  ctx.lineWidth = 2;
-  ctx.font = 'bold 24px monospace';
-  ctx.textAlign = 'center';
-  ctx.strokeText(score, W / 2, 30);
-  ctx.fillText(score, W / 2, 30);
+  const dc = displayCtx;
+  const scale = 1 + scoreFlash * 0.02;
+  dc.save();
+  dc.translate(W * SCALE / 2, 60);
+  dc.scale(scale, scale);
+  dc.fillStyle = scoreFlash > 0 ? '#ffe082' : '#fff';
+  dc.strokeStyle = '#333';
+  dc.lineWidth = 5;
+  dc.font = 'bold 52px "Segoe UI", system-ui, sans-serif';
+  dc.textAlign = 'center';
+  dc.strokeText(score, 0, 0);
+  dc.fillText(score, 0, 0);
+  dc.restore();
 }
 function drawReady() {
-  ctx.fillStyle = '#fff';
-  ctx.strokeStyle = '#333';
-  ctx.lineWidth = 2;
-  ctx.font = 'bold 18px monospace';
-  ctx.textAlign = 'center';
-  ctx.strokeText('Flappy Bird', W / 2, H / 2 - 40);
-  ctx.fillText('Flappy Bird', W / 2, H / 2 - 40);
-  ctx.font = 'bold 8px monospace';
-  ctx.lineWidth = 1;
-  ctx.strokeText('Tap, Click or Space', W / 2, H / 2 + 30);
-  ctx.fillText('Tap, Click or Space', W / 2, H / 2 + 30);
+  const dc = displayCtx;
+  const cx = W * SCALE / 2;
+  const cy = H * SCALE / 2;
+  dc.fillStyle = '#fff';
+  dc.strokeStyle = '#333';
+  dc.lineWidth = 4;
+  dc.font = 'bold 40px "Segoe UI", system-ui, sans-serif';
+  dc.textAlign = 'center';
+  dc.strokeText('Flappy Bird', cx, cy - 80);
+  dc.fillText('Flappy Bird', cx, cy - 80);
+  dc.font = 'bold 22px "Segoe UI", system-ui, sans-serif';
+  dc.lineWidth = 3;
+  dc.strokeText('Tap, Click or Space', cx, cy + 60);
+  dc.fillText('Tap, Click or Space', cx, cy + 60);
   if (bestScore > 0) {
-    ctx.font = '7px monospace';
-    ctx.fillStyle = '#ffe082';
-    ctx.strokeText('Best: ' + bestScore, W / 2, H / 2 + 42);
-    ctx.fillText('Best: ' + bestScore, W / 2, H / 2 + 42);
+    dc.font = '18px "Segoe UI", system-ui, sans-serif';
+    dc.fillStyle = '#ffe082';
+    dc.lineWidth = 3;
+    dc.strokeText('Best: ' + bestScore, cx, cy + 90);
+    dc.fillText('Best: ' + bestScore, cx, cy + 90);
   }
 }
 function drawGameOver() {
-  ctx.fillStyle = 'rgba(0,0,0,0.35)';
-  ctx.fillRect(0, 0, W, H);
-  const pw = 130, ph = 80;
-  const ppx = (W - pw) / 2, py = (H - ph) / 2 - 10;
+  const dc = displayCtx;
+  const cx = W * SCALE / 2;
+  const cy = H * SCALE / 2;
+  dc.fillStyle = 'rgba(0,0,0,0.35)';
+  dc.fillRect(0, 0, W * SCALE, H * SCALE);
+  const pw = 280, ph = 200;
+  const ppx = (W * SCALE - pw) / 2, py = cy - ph / 2 - 20;
   // Panel
-  ctx.fillStyle = '#dec076';
-  ctx.fillRect(ppx, py, pw, ph);
-  // Panel border
-  ctx.fillStyle = '#8b6914';
-  px(ppx, py, pw, 2);
-  px(ppx, py + ph - 2, pw, 2);
-  px(ppx, py, 2, ph);
-  px(ppx + pw - 2, py, 2, ph);
+  dc.fillStyle = '#dec076';
+  dc.strokeStyle = '#8b6914';
+  dc.lineWidth = 4;
+  dc.beginPath();
+  dc.roundRect(ppx, py, pw, ph, 10);
+  dc.fill();
+  dc.stroke();
 
-  ctx.fillStyle = '#fff';
-  ctx.strokeStyle = '#333';
-  ctx.lineWidth = 2;
-  ctx.font = 'bold 14px monospace';
-  ctx.textAlign = 'center';
-  ctx.strokeText('Game Over', W / 2, py + 20);
-  ctx.fillText('Game Over', W / 2, py + 20);
-  ctx.font = '10px monospace';
-  ctx.fillStyle = '#333';
-  ctx.fillText('Score: ' + score, W / 2, py + 38);
-  ctx.fillStyle = '#8b6914';
-  ctx.fillText('Best: ' + bestScore, W / 2, py + 52);
-  ctx.font = '7px monospace';
-  ctx.fillStyle = '#555';
-  ctx.fillText('Tap to restart', W / 2, py + 68);
+  dc.fillStyle = '#fff';
+  dc.strokeStyle = '#333';
+  dc.lineWidth = 4;
+  dc.font = 'bold 36px "Segoe UI", system-ui, sans-serif';
+  dc.textAlign = 'center';
+  dc.strokeText('Game Over', cx, py + 50);
+  dc.fillText('Game Over', cx, py + 50);
+  dc.font = '24px "Segoe UI", system-ui, sans-serif';
+  dc.fillStyle = '#333';
+  dc.fillText('Score: ' + score, cx, py + 95);
+  dc.fillStyle = '#8b6914';
+  dc.fillText('Best: ' + bestScore, cx, py + 130);
+  dc.font = '18px "Segoe UI", system-ui, sans-serif';
+  dc.fillStyle = '#555';
+  dc.fillText('Tap to restart', cx, py + 170);
 }
 
 function draw() {
@@ -527,13 +540,15 @@ function draw() {
   pipes.forEach(drawPipe);
   drawGround();
   drawBird();
+
+  // Scale pixel art up to display canvas
+  displayCtx.clearRect(0, 0, canvas.width, canvas.height);
+  displayCtx.drawImage(offscreen, 0, 0, canvas.width, canvas.height);
+
+  // Draw text AFTER upscale so it's crisp at full resolution
   if (gameState === 'playing' || gameState === 'dead') drawScore();
   if (gameState === 'ready') drawReady();
   if (gameState === 'dead') drawGameOver();
-
-  // Scale up to display canvas
-  displayCtx.clearRect(0, 0, canvas.width, canvas.height);
-  displayCtx.drawImage(offscreen, 0, 0, canvas.width, canvas.height);
 }
 
 function loop() {
