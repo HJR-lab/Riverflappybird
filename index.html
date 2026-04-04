@@ -266,6 +266,11 @@ if (!localStorage.getItem('flappyScoreReset1')) {
   localStorage.removeItem('flappyTotalPipes');
   localStorage.setItem('flappyScoreReset1', '1');
 }
+// One-time grant: set best score to 200 to unlock all skins
+if (!localStorage.getItem('flappyGrant200')) {
+  localStorage.setItem('flappyBest', '200');
+  localStorage.setItem('flappyGrant200', '1');
+}
 bestScore = parseInt(localStorage.getItem('flappyBest') || '0');
 
 // Seeded random for consistent background elements
