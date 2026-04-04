@@ -349,75 +349,80 @@ function drawPipe(p) {
   px(p.x + PIPE_WIDTH + capExtra - 1, bTop, 1, capH);
 }
 
+// Bird drawn on displayCtx at full resolution for crisp visibility
 function drawBird() {
-  ctx.save();
-  ctx.translate(Math.floor(bird.x), Math.floor(bird.y));
+  const dc = displayCtx;
+  dc.save();
+  dc.translate(Math.floor(bird.x * SCALE), Math.floor(bird.y * SCALE));
   const rot = bird.rotation * Math.PI / 180;
-  ctx.rotate(rot);
-  const S = BIRD_SIZE;
-  const wingY = bird.flapFrame > 0 ? -4 : (Math.sin(frameCount * 0.15) > 0 ? 2 : 0);
+  dc.rotate(rot);
+  const S = BIRD_SIZE * SCALE;
+  const wingY = bird.flapFrame > 0 ? -8 : (Math.sin(frameCount * 0.15) > 0 ? 4 : 0);
 
-  // Pixel bird drawn with rectangles
+  function bpx(x, y, w, h) {
+    dc.fillRect(Math.floor(x), Math.floor(y), Math.floor(w) || 1, Math.floor(h) || 1);
+  }
+
   // Dark outline
-  ctx.fillStyle = '#543847';
-  px(-S - 1, -S * 0.7 - 1, S * 2 + 2, S * 1.4 + 2);
+  dc.fillStyle = '#543847';
+  bpx(-S - 2, -S * 0.7 - 2, S * 2 + 4, S * 1.4 + 4);
 
   // Body - orange
-  ctx.fillStyle = '#f5a623';
-  px(-S, -S * 0.7, S * 2, S * 1.4);
+  dc.fillStyle = '#f5a623';
+  bpx(-S, -S * 0.7, S * 2, S * 1.4);
 
   // Yellow top
-  ctx.fillStyle = '#f7c948';
-  px(-S + 1, -S * 0.7, S * 2 - 2, S * 0.7);
+  dc.fillStyle = '#f7c948';
+  bpx(-S + 2, -S * 0.7, S * 2 - 4, S * 0.7);
 
   // Red chest stripe
-  ctx.fillStyle = '#e84430';
-  px(-S + 2, S * 0.2, S * 1.6, 3);
+  dc.fillStyle = '#e84430';
+  bpx(-S + 4, S * 0.2, S * 1.6, 6);
   // Darker red edge
-  ctx.fillStyle = '#c43020';
-  px(-S + 2, S * 0.2 + 3, S * 1.6, 1);
+  dc.fillStyle = '#c43020';
+  bpx(-S + 4, S * 0.2 + 6, S * 1.6, 2);
 
   // Wing - white
-  ctx.fillStyle = '#fff';
-  px(-S + 1, wingY - 2, 8, 5);
+  dc.fillStyle = '#fff';
+  bpx(-S + 2, wingY - 4, 16, 10);
   // Wing outline
-  ctx.fillStyle = '#543847';
-  px(-S + 1, wingY - 3, 8, 1);
-  px(-S + 1, wingY + 3, 8, 1);
-  px(-S, wingY - 2, 1, 5);
-  px(-S + 9, wingY - 2, 1, 5);
+  dc.fillStyle = '#543847';
+  bpx(-S + 2, wingY - 6, 16, 2);
+  bpx(-S + 2, wingY + 6, 16, 2);
+  bpx(-S, wingY - 4, 2, 10);
+  bpx(-S + 18, wingY - 4, 2, 10);
 
   // Eye white - large
-  ctx.fillStyle = '#fff';
-  px(S * 0.2, -S * 0.6, 7, 7);
+  dc.fillStyle = '#fff';
+  bpx(S * 0.2, -S * 0.6, 14, 14);
   // Eye outline
-  ctx.fillStyle = '#543847';
-  px(S * 0.2, -S * 0.6 - 1, 7, 1);
-  px(S * 0.2, -S * 0.6 + 7, 7, 1);
-  px(S * 0.2 - 1, -S * 0.6, 1, 7);
-  px(S * 0.2 + 7, -S * 0.6, 1, 7);
+  dc.fillStyle = '#543847';
+  bpx(S * 0.2, -S * 0.6 - 2, 14, 2);
+  bpx(S * 0.2, -S * 0.6 + 14, 14, 2);
+  bpx(S * 0.2 - 2, -S * 0.6, 2, 14);
+  bpx(S * 0.2 + 14, -S * 0.6, 2, 14);
 
   // Pupil
-  ctx.fillStyle = '#111';
-  px(S * 0.2 + 4, -S * 0.6 + 2, 3, 3);
+  dc.fillStyle = '#111';
+  bpx(S * 0.2 + 8, -S * 0.6 + 4, 6, 6);
 
   // Pupil highlight
-  ctx.fillStyle = '#fff';
-  px(S * 0.2 + 5, -S * 0.6 + 2, 1, 1);
+  dc.fillStyle = '#fff';
+  bpx(S * 0.2 + 10, -S * 0.6 + 4, 2, 2);
 
   // Beak - orange
-  ctx.fillStyle = '#f5a623';
-  px(S + 1, -2, 6, 4);
+  dc.fillStyle = '#f5a623';
+  bpx(S + 2, -4, 12, 8);
   // Beak outline
-  ctx.fillStyle = '#543847';
-  px(S + 1, -3, 6, 1);
-  px(S + 1, 2, 6, 1);
-  px(S + 7, -2, 1, 4);
+  dc.fillStyle = '#543847';
+  bpx(S + 2, -6, 12, 2);
+  bpx(S + 2, 4, 12, 2);
+  bpx(S + 14, -4, 2, 8);
   // Beak line
-  ctx.fillStyle = '#c43020';
-  px(S + 1, 0, 6, 1);
+  dc.fillStyle = '#c43020';
+  bpx(S + 2, 0, 12, 2);
 
-  ctx.restore();
+  dc.restore();
 }
 
 function drawGround() {
@@ -542,13 +547,13 @@ function draw() {
   drawBushes();
   pipes.forEach(drawPipe);
   drawGround();
-  drawBird();
 
   // Scale pixel art up to display canvas
   displayCtx.clearRect(0, 0, canvas.width, canvas.height);
   displayCtx.drawImage(offscreen, 0, 0, canvas.width, canvas.height);
 
-  // Draw text AFTER upscale so it's crisp at full resolution
+  // Draw bird and text AFTER upscale so they're crisp at full resolution
+  drawBird();
   if (gameState === 'playing' || gameState === 'dead') drawScore();
   if (gameState === 'ready') drawReady();
   if (gameState === 'dead') drawGameOver();
