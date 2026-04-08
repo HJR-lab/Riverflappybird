@@ -269,12 +269,13 @@ localStorage.removeItem('flappyTotalPipes');
 localStorage.removeItem('flappyGrant200');
 localStorage.removeItem('flappyScoreReset1');
 localStorage.removeItem('flappyScoreReset2');
-const savedScore = parseInt(localStorage.getItem('flappyBest') || '0');
-// Reset any score >= 200 (illegitimate grants) unless owner flag is set
-if (savedScore >= 200 && localStorage.getItem('flappyOwnerGrant1000')) {
-  // Owner keeps their score
-} else if (savedScore >= 200) {
+// Force reset everyone's score to 0
+// Owner: manually set your score back in browser console:
+// localStorage.setItem('flappyBest', '1000')
+localStorage.removeItem('flappyOwnerGrant1000');
+if (!localStorage.getItem('flappyHardReset3')) {
   localStorage.setItem('flappyBest', '0');
+  localStorage.setItem('flappyHardReset3', '1');
 }
 bestScore = parseInt(localStorage.getItem('flappyBest') || '0');
 
