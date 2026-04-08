@@ -615,6 +615,78 @@ function drawBird() {
     dc.fillRect(Math.floor(x), Math.floor(y), Math.floor(w) || 1, Math.floor(h) || 1);
   }
 
+  if (sk.nyan) {
+    // Draw Nyan Cat sprite
+    const p = 2; // pixel size
+
+    // Rainbow trail
+    dc.save();
+    dc.rotate(-rot);
+    const rc = ['#ff0000','#ff9900','#ffff00','#33ff00','#0099ff','#6633ff'];
+    for (let i = 0; i < 6; i++) {
+      dc.fillStyle = rc[i];
+      const wave = Math.sin(frameCount * 0.3 + i * 0.5) * 2;
+      bpx(-S - 44, -6 + i * p + wave, 42, p);
+    }
+    dc.restore();
+
+    // Pop-tart body (pink with darker edge)
+    dc.fillStyle = '#c48450';
+    bpx(-12, -10, 24, 20);
+    dc.fillStyle = '#f0a0b0';
+    bpx(-10, -8, 20, 16);
+    // Sprinkles on pop-tart
+    dc.fillStyle = '#ff6680'; bpx(-6, -5, 2, 2);
+    dc.fillStyle = '#66ccff'; bpx(2, -3, 2, 2);
+    dc.fillStyle = '#ffcc00'; bpx(-3, 1, 2, 2);
+    dc.fillStyle = '#ff6680'; bpx(5, 3, 2, 2);
+    dc.fillStyle = '#66ccff'; bpx(-7, 3, 2, 2);
+    dc.fillStyle = '#ffcc00'; bpx(1, 5, 2, 2);
+
+    // Cat head (grey, sticking out right)
+    dc.fillStyle = '#999';
+    bpx(10, -8, 14, 14);
+    // Cat ears
+    bpx(11, -14, 4, 6);
+    bpx(19, -14, 4, 6);
+    // Inner ears
+    dc.fillStyle = '#f0a0b0';
+    bpx(12, -12, 2, 4);
+    bpx(20, -12, 2, 4);
+    // Eyes
+    dc.fillStyle = '#111';
+    bpx(14, -4, 3, 3);
+    bpx(20, -4, 3, 3);
+    // Eye highlights
+    dc.fillStyle = '#fff';
+    bpx(15, -4, 1, 1);
+    bpx(21, -4, 1, 1);
+    // Mouth
+    dc.fillStyle = '#111';
+    bpx(17, 1, 2, 1);
+    // Cheeks
+    dc.fillStyle = '#f0a0b0';
+    bpx(12, 0, 2, 2);
+    bpx(22, 0, 2, 2);
+
+    // Cat tail (left side, behind pop-tart)
+    dc.fillStyle = '#999';
+    const tailWave = Math.sin(frameCount * 0.2) * 3;
+    bpx(-14, -4 + tailWave, 4, 6);
+    bpx(-18, -2 + tailWave, 4, 4);
+
+    // Legs (animated)
+    const legOff = Math.sin(frameCount * 0.3) > 0 ? 2 : 0;
+    dc.fillStyle = '#999';
+    bpx(-8, 10 + legOff, 3, 5);
+    bpx(-2, 10 - legOff, 3, 5);
+    bpx(4, 10 + legOff, 3, 5);
+    bpx(10, 10 - legOff, 3, 5);
+
+    dc.restore();
+    return;
+  }
+
   // Dark outline
   dc.fillStyle = sk.outline;
   bpx(-S - 2, -S * 0.7 - 2, S * 2 + 4, S * 1.4 + 4);
@@ -696,23 +768,6 @@ function drawBird() {
       dc.arc(0, 0, haloRX, 0, Math.PI * 2); dc.restore();
     }
     dc.stroke();
-  }
-
-  // Nyan Cat rainbow trail
-  if (sk.nyan) {
-    dc.save();
-    dc.rotate(-rot); // undo bird rotation for horizontal trail
-    const rainbowColors = ['#ff0000','#ff9900','#ffff00','#33ff00','#0099ff','#6633ff'];
-    const trailLen = 40;
-    const bandH = 3;
-    const startX = -S - 4 - trailLen;
-    const startY = -bandH * 3;
-    for (let i = 0; i < rainbowColors.length; i++) {
-      dc.fillStyle = rainbowColors[i];
-      const wave = Math.sin(frameCount * 0.3 + i * 0.5) * 2;
-      dc.fillRect(Math.floor(startX), Math.floor(startY + i * bandH + wave), trailLen, bandH);
-    }
-    dc.restore();
   }
 
   dc.restore();
