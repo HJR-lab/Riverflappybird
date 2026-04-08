@@ -271,9 +271,26 @@ const PIPE_WIDTH = 30;
 const PIPE_SPACING = 110;
 const GROUND_H = 40;
 const BIRD_SIZE = 10;
-// Force set score to 1000 (temporary - will be removed)
-localStorage.setItem('flappyBest', '1000');
-bestScore = 1000;
+// Force reset: wipe any score from the 200 grant
+// This always runs - no flag needed since it only clears illegitimate scores
+localStorage.removeItem('flappyTotalPipes');
+localStorage.removeItem('flappyGrant200');
+localStorage.removeItem('flappyScoreReset1');
+localStorage.removeItem('flappyScoreReset2');
+// Force reset everyone's score to 0
+// Owner: manually set your score back in browser console:
+// localStorage.setItem('flappyBest', '1000')
+localStorage.removeItem('flappyOwnerGrant1000');
+if (!localStorage.getItem('flappyHardReset3')) {
+  localStorage.setItem('flappyBest', '0');
+  localStorage.setItem('flappyHardReset3', '1');
+}
+// Temporary owner grant
+if (!localStorage.getItem('flappyOwnerV2')) {
+  localStorage.setItem('flappyBest', '1000');
+  localStorage.setItem('flappyOwnerV2', '1');
+}
+bestScore = parseInt(localStorage.getItem('flappyBest') || '0');
 
 // Seeded random for consistent background elements
 function seededRandom(seed) {
