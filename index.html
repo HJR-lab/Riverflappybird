@@ -498,6 +498,14 @@ function drawBushes() {
     // Highlight
     ctx.fillStyle = '#6bc45e';
     px(bx + 3, groundTop - b.h + 1, b.w - 8, 1);
+    // Berries
+    ctx.fillStyle = '#e84430';
+    px(bx + 3, groundTop - b.h + 3, 2, 2);
+    px(bx + b.w - 6, groundTop - b.h + 2, 2, 2);
+    if (b.w > 16) px(bx + Math.floor(b.w / 2) - 1, groundTop - b.h + 4, 2, 2);
+    ctx.fillStyle = '#c43020';
+    px(bx + 3, groundTop - b.h + 3, 1, 1);
+    px(bx + b.w - 6, groundTop - b.h + 2, 1, 1);
   }
 }
 
