@@ -171,6 +171,7 @@ const SKINS = [
   { name: 'Gold', unlock: 50, outline: '#5a4010', body: '#f7c948', top: '#ffe082', stripe: '#e8a820', stripeDark: '#c49000', wing: '#fff4a3', eye: '#fff', pupil: '#4a3000', beak: '#e8a820', beakLine: '#c49000' },
   { name: 'Dark Knight', unlock: 100, outline: '#000', body: '#1a1a1a', top: '#2a2a2a', stripe: '#333', stripeDark: '#222', wing: '#111', eye: '#222', pupil: '#cc0000', beak: '#333', beakLine: '#111' },
   { name: 'Angel', unlock: 200, halo: true, outline: '#8a7a50', body: '#f0ece0', top: '#fff', stripe: '#e8dcc8', stripeDark: '#d8ccb0', wing: '#fff', eye: '#fff', pupil: '#5a4a30', beak: '#f5c542', beakLine: '#d4a020' },
+  { name: 'Nyan Cat', unlock: 250, nyan: true, outline: '#555', body: '#f0a0b0', top: '#f8c0cc', stripe: '#f0a0b0', stripeDark: '#e090a0', wing: '#999', eye: '#fff', pupil: '#111', beak: '#f8c0cc', beakLine: '#e090a0' },
 ];
 let currentSkin = 0;
 
@@ -216,6 +217,13 @@ function drawSkinPreview(skinIdx, cvs) {
       pc.arc(0, 0, 7, 0, Math.PI * 2); pc.restore();
     }
     pc.stroke();
+  }
+  if (s.nyan && !locked) {
+    const rc = ['#f00','#f90','#ff0','#3f0','#09f','#63f'];
+    for (let i = 0; i < 6; i++) {
+      pc.fillStyle = rc[i];
+      pc.fillRect(1, cy - 6 + i * 2, 8, 2);
+    }
   }
   if (locked) {
     pc.fillStyle = 'rgba(0,0,0,0.5)';
@@ -683,6 +691,23 @@ function drawBird() {
       dc.arc(0, 0, haloRX, 0, Math.PI * 2); dc.restore();
     }
     dc.stroke();
+  }
+
+  // Nyan Cat rainbow trail
+  if (sk.nyan) {
+    dc.save();
+    dc.rotate(-rot); // undo bird rotation for horizontal trail
+    const rainbowColors = ['#ff0000','#ff9900','#ffff00','#33ff00','#0099ff','#6633ff'];
+    const trailLen = 40;
+    const bandH = 3;
+    const startX = -S - 4 - trailLen;
+    const startY = -bandH * 3;
+    for (let i = 0; i < rainbowColors.length; i++) {
+      dc.fillStyle = rainbowColors[i];
+      const wave = Math.sin(frameCount * 0.3 + i * 0.5) * 2;
+      dc.fillRect(Math.floor(startX), Math.floor(startY + i * bandH + wave), trailLen, bandH);
+    }
+    dc.restore();
   }
 
   dc.restore();
