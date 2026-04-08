@@ -343,9 +343,9 @@ function jump() {
   }
 }
 document.addEventListener('keydown', e => { if (e.code === 'Space' || e.code === 'ArrowUp') { e.preventDefault(); if (controlsDiv.style.display === 'none') jump(); }});
-let usesTouch = false;
-canvas.addEventListener('touchstart', e => { e.preventDefault(); usesTouch = true; jump(); }, { passive: false });
-canvas.addEventListener('click', () => { if (!usesTouch) jump(); });
+let lastTouchTime = 0;
+canvas.addEventListener('touchstart', e => { e.preventDefault(); lastTouchTime = Date.now(); jump(); }, { passive: false });
+canvas.addEventListener('click', () => { if (Date.now() - lastTouchTime > 300) jump(); });
 
 function update() {
   frameCount++;
@@ -523,15 +523,16 @@ function drawPipe(p) {
   const capExtra = 3;
   const groundTop = H - GROUND_H;
 
-  // Top pipe body
+  // Top pipe body - start above screen to ensure no gap at top
+  const tBodyH = p.topH - capH;
   ctx.fillStyle = '#5cb85c';
-  px(p.x + 1, 0, PIPE_WIDTH - 2, p.topH - capH);
+  ctx.fillRect(Math.floor(p.x) + 1, 0, PIPE_WIDTH - 2, tBodyH);
   // Pipe highlight
   ctx.fillStyle = '#73d673';
-  px(p.x + 3, 0, 4, p.topH - capH);
+  ctx.fillRect(Math.floor(p.x) + 3, 0, 4, tBodyH);
   // Pipe shadow
   ctx.fillStyle = '#3d8b3d';
-  px(p.x + PIPE_WIDTH - 5, 0, 3, p.topH - capH);
+  ctx.fillRect(Math.floor(p.x) + PIPE_WIDTH - 5, 0, 3, tBodyH);
   // Top pipe cap
   ctx.fillStyle = '#5cb85c';
   px(p.x - capExtra, p.topH - capH, PIPE_WIDTH + capExtra * 2, capH);
@@ -544,14 +545,16 @@ function drawPipe(p) {
   px(p.x - capExtra, p.topH - capH, 1, capH);
   px(p.x + PIPE_WIDTH + capExtra - 1, p.topH - capH, 1, capH);
 
-  // Bottom pipe
+  // Bottom pipe - extend to ground with no gap
   const bTop = p.topH + PIPE_GAP;
+  const bBodyTop = bTop + capH;
+  const bBodyH = groundTop - bBodyTop + 2; // +2 to overlap into ground, no gap
   ctx.fillStyle = '#5cb85c';
-  px(p.x + 1, bTop + capH, PIPE_WIDTH - 2, groundTop - bTop - capH);
+  px(p.x + 1, bBodyTop, PIPE_WIDTH - 2, bBodyH);
   ctx.fillStyle = '#73d673';
-  px(p.x + 3, bTop + capH, 4, groundTop - bTop - capH);
+  px(p.x + 3, bBodyTop, 4, bBodyH);
   ctx.fillStyle = '#3d8b3d';
-  px(p.x + PIPE_WIDTH - 5, bTop + capH, 3, groundTop - bTop - capH);
+  px(p.x + PIPE_WIDTH - 5, bBodyTop, 3, bBodyH);
   // Bottom pipe cap
   ctx.fillStyle = '#5cb85c';
   px(p.x - capExtra, bTop, PIPE_WIDTH + capExtra * 2, capH);
