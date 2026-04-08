@@ -616,72 +616,104 @@ function drawBird() {
   }
 
   if (sk.nyan) {
-    // Draw Nyan Cat sprite
-    const p = 2; // pixel size
+    // Nyan Cat - accurate pixel recreation
+    const p = 2; // pixel unit
 
-    // Rainbow trail
+    // Rainbow trail (behind everything, undo rotation for horizontal)
     dc.save();
     dc.rotate(-rot);
     const rc = ['#ff0000','#ff9900','#ffff00','#33ff00','#0099ff','#6633ff'];
     for (let i = 0; i < 6; i++) {
       dc.fillStyle = rc[i];
-      const wave = Math.sin(frameCount * 0.3 + i * 0.5) * 2;
-      bpx(-S - 44, -6 + i * p + wave, 42, p);
+      const wave = Math.sin(frameCount * 0.25 + i * 0.4) * 1.5;
+      bpx(-14*p - 20*p, -3*p + i * p + wave, 20*p, p);
     }
     dc.restore();
 
-    // Pop-tart body (pink with darker edge)
-    dc.fillStyle = '#c48450';
-    bpx(-12, -10, 24, 20);
-    dc.fillStyle = '#f0a0b0';
-    bpx(-10, -8, 20, 16);
-    // Sprinkles on pop-tart
-    dc.fillStyle = '#ff6680'; bpx(-6, -5, 2, 2);
-    dc.fillStyle = '#66ccff'; bpx(2, -3, 2, 2);
-    dc.fillStyle = '#ffcc00'; bpx(-3, 1, 2, 2);
-    dc.fillStyle = '#ff6680'; bpx(5, 3, 2, 2);
-    dc.fillStyle = '#66ccff'; bpx(-7, 3, 2, 2);
-    dc.fillStyle = '#ffcc00'; bpx(1, 5, 2, 2);
+    // Cat tail (behind pop-tart, left side)
+    dc.fillStyle = '#666';
+    const tw = Math.sin(frameCount * 0.2) * 2;
+    bpx(-14*p, -1*p + tw, 2*p, 3*p);
+    bpx(-16*p, 0*p + tw, 2*p, 2*p);
+    dc.fillStyle = '#555';
+    bpx(-14*p, -1*p + tw, p, 3*p);
 
-    // Cat head (grey, sticking out right)
+    // Pop-tart crust (tan border)
+    dc.fillStyle = '#c8a070';
+    bpx(-12*p, -7*p, 18*p, 14*p);
+    // Pop-tart frosting (pink fill)
+    dc.fillStyle = '#ff99aa';
+    bpx(-11*p, -6*p, 16*p, 12*p);
+    // Sprinkles
+    dc.fillStyle = '#ff5577'; bpx(-9*p, -4*p, p, p);
+    dc.fillStyle = '#ff5577'; bpx(-4*p, -2*p, p, p);
+    dc.fillStyle = '#55aaff'; bpx(-7*p, -1*p, p, p);
+    dc.fillStyle = '#55aaff'; bpx(-1*p, 1*p, p, p);
+    dc.fillStyle = '#ffcc44'; bpx(-5*p, 2*p, p, p);
+    dc.fillStyle = '#ffcc44'; bpx(1*p, -4*p, p, p);
+    dc.fillStyle = '#ff5577'; bpx(2*p, 3*p, p, p);
+    dc.fillStyle = '#55aaff'; bpx(-9*p, 3*p, p, p);
+
+    // Cat head (grey, right side overlapping pop-tart)
     dc.fillStyle = '#999';
-    bpx(10, -8, 14, 14);
-    // Cat ears
-    bpx(11, -14, 4, 6);
-    bpx(19, -14, 4, 6);
+    bpx(4*p, -6*p, 10*p, 10*p);
+    // Dark outline on head
+    dc.fillStyle = '#555';
+    bpx(4*p, -6*p, 10*p, p); // top
+    bpx(4*p, 4*p, 10*p, p);  // bottom
+    bpx(4*p, -6*p, p, 10*p); // left
+    bpx(13*p, -6*p, p, 10*p); // right
+
+    // Ears (triangles on top of head)
+    dc.fillStyle = '#999';
+    bpx(5*p, -9*p, 3*p, 3*p);
+    bpx(6*p, -10*p, p, p);
+    bpx(10*p, -9*p, 3*p, 3*p);
+    bpx(11*p, -10*p, p, p);
     // Inner ears
-    dc.fillStyle = '#f0a0b0';
-    bpx(12, -12, 2, 4);
-    bpx(20, -12, 2, 4);
-    // Eyes
+    dc.fillStyle = '#ff99aa';
+    bpx(6*p, -8*p, p, 2*p);
+    bpx(11*p, -8*p, p, 2*p);
+
+    // Eyes (open, oval-ish with highlight)
     dc.fillStyle = '#111';
-    bpx(14, -4, 3, 3);
-    bpx(20, -4, 3, 3);
+    bpx(6*p, -3*p, 2*p, 3*p);
+    bpx(10*p, -3*p, 2*p, 3*p);
     // Eye highlights
     dc.fillStyle = '#fff';
-    bpx(15, -4, 1, 1);
-    bpx(21, -4, 1, 1);
-    // Mouth
+    bpx(6*p, -3*p, p, p);
+    bpx(10*p, -3*p, p, p);
+
+    // Mouth (open, like meowing)
     dc.fillStyle = '#111';
-    bpx(17, 1, 2, 1);
+    bpx(8*p, 1*p, p, p);
+    bpx(9*p, 1*p, p, p);
+    bpx(7*p, 2*p, p, p);
+    bpx(10*p, 2*p, p, p);
+    bpx(8*p, 2*p, 2*p, p);
+    // Inside mouth
+    dc.fillStyle = '#ff6666';
+    bpx(8*p, 2*p, p, p);
+
     // Cheeks
-    dc.fillStyle = '#f0a0b0';
-    bpx(12, 0, 2, 2);
-    bpx(22, 0, 2, 2);
+    dc.fillStyle = '#ff99aa';
+    bpx(5*p, 1*p, p, p);
+    bpx(12*p, 1*p, p, p);
 
-    // Cat tail (left side, behind pop-tart)
+    // Legs (animated, short stubs underneath pop-tart)
+    const legA = Math.sin(frameCount * 0.3) > 0 ? p : 0;
+    const legB = Math.sin(frameCount * 0.3) > 0 ? 0 : p;
     dc.fillStyle = '#999';
-    const tailWave = Math.sin(frameCount * 0.2) * 3;
-    bpx(-14, -4 + tailWave, 4, 6);
-    bpx(-18, -2 + tailWave, 4, 4);
-
-    // Legs (animated)
-    const legOff = Math.sin(frameCount * 0.3) > 0 ? 2 : 0;
-    dc.fillStyle = '#999';
-    bpx(-8, 10 + legOff, 3, 5);
-    bpx(-2, 10 - legOff, 3, 5);
-    bpx(4, 10 + legOff, 3, 5);
-    bpx(10, 10 - legOff, 3, 5);
+    bpx(-10*p, 7*p + legA, 2*p, 3*p);
+    bpx(-5*p, 7*p + legB, 2*p, 3*p);
+    bpx(0*p, 7*p + legA, 2*p, 3*p);
+    bpx(5*p, 7*p + legB, 2*p, 3*p);
+    // Leg outlines
+    dc.fillStyle = '#555';
+    bpx(-10*p, 7*p + legA, 2*p, p);
+    bpx(-5*p, 7*p + legB, 2*p, p);
+    bpx(0*p, 7*p + legA, 2*p, p);
+    bpx(5*p, 7*p + legB, 2*p, p);
 
     dc.restore();
     return;
