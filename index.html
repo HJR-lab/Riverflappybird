@@ -266,6 +266,11 @@ if (!localStorage.getItem('flappyScoreReset1')) {
   localStorage.removeItem('flappyTotalPipes');
   localStorage.setItem('flappyScoreReset1', '1');
 }
+// Second reset: clear 200 grant scores
+if (!localStorage.getItem('flappyScoreReset2')) {
+  localStorage.setItem('flappyBest', '0');
+  localStorage.setItem('flappyScoreReset2', '1');
+}
 bestScore = parseInt(localStorage.getItem('flappyBest') || '0');
 
 // Seeded random for consistent background elements
