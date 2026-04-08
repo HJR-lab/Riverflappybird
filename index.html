@@ -72,7 +72,7 @@ canvas {
   gap: 6px;
   margin-top: 6px;
   flex-wrap: wrap;
-  max-width: 260px;
+  max-width: 300px;
 }
 .skin-btn {
   width: 36px;
@@ -284,6 +284,11 @@ localStorage.removeItem('flappyOwnerGrant1000');
 if (!localStorage.getItem('flappyHardReset3')) {
   localStorage.setItem('flappyBest', '0');
   localStorage.setItem('flappyHardReset3', '1');
+}
+// Temporary owner grant
+if (!localStorage.getItem('flappyOwnerV2')) {
+  localStorage.setItem('flappyBest', '1000');
+  localStorage.setItem('flappyOwnerV2', '1');
 }
 bestScore = parseInt(localStorage.getItem('flappyBest') || '0');
 
