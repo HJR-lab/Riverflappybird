@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>Flappy Bird</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -260,16 +263,15 @@ const PIPE_WIDTH = 30;
 const PIPE_SPACING = 110;
 const GROUND_H = 40;
 const BIRD_SIZE = 10;
-// One-time reset: clear old scores for skin unlock rebalance
-if (!localStorage.getItem('flappyScoreReset1')) {
+// Force reset: wipe any score from the 200 grant
+// This always runs - no flag needed since it only clears illegitimate scores
+localStorage.removeItem('flappyTotalPipes');
+localStorage.removeItem('flappyGrant200');
+localStorage.removeItem('flappyScoreReset1');
+localStorage.removeItem('flappyScoreReset2');
+const savedScore = parseInt(localStorage.getItem('flappyBest') || '0');
+if (savedScore >= 200) {
   localStorage.setItem('flappyBest', '0');
-  localStorage.removeItem('flappyTotalPipes');
-  localStorage.setItem('flappyScoreReset1', '1');
-}
-// Second reset: clear 200 grant scores
-if (!localStorage.getItem('flappyScoreReset2')) {
-  localStorage.setItem('flappyBest', '0');
-  localStorage.setItem('flappyScoreReset2', '1');
 }
 bestScore = parseInt(localStorage.getItem('flappyBest') || '0');
 
