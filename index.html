@@ -652,44 +652,36 @@ function drawBird() {
     npx(0, 2, 1, 1, '#ff5577');
     npx(3, 0, 1, 1, '#5599ff');
 
-    // === CAT HEAD (smaller, right side) ===
-    npx(5, -4, 7, 8, '#999');  // head fill
-    // Outline
-    npx(5, -4, 7, 1, '#666');
-    npx(5, 3, 7, 1, '#666');
-    npx(5, -4, 1, 8, '#666');
-    npx(11, -4, 1, 8, '#666');
+    // === CAT HEAD ===
+    npx(5, -5, 8, 9, '#999');  // head fill (no outline box, just grey)
 
-    // Ears
-    npx(6, -6, 2, 2, '#999');
-    npx(6, -7, 1, 1, '#999');
-    npx(6, -7, 1, 1, '#666');
-    npx(6, -6, 2, 1, '#666');
-    npx(6, -6, 1, 2, '#666');
-    npx(7, -5, 1, 1, '#ff99aa'); // inner
+    // Left ear (top-left of head)
+    npx(5, -8, 2, 3, '#999');
+    npx(5, -9, 1, 1, '#999');
+    npx(6, -7, 1, 1, '#ff99aa'); // inner
 
-    npx(9, -6, 2, 2, '#999');
-    npx(10, -7, 1, 1, '#999');
-    npx(10, -7, 1, 1, '#666');
-    npx(9, -6, 2, 1, '#666');
-    npx(10, -6, 1, 2, '#666');
-    npx(9, -5, 1, 1, '#ff99aa'); // inner
+    // Right ear (top-right of head)
+    npx(10, -8, 2, 3, '#999');
+    npx(11, -9, 1, 1, '#999');
+    npx(10, -7, 1, 1, '#ff99aa'); // inner
 
-    // Eyes
-    npx(7, -2, 1, 2, '#000');
-    npx(7, -2, 1, 1, '#fff');
-    npx(10, -2, 1, 2, '#000');
-    npx(10, -2, 1, 1, '#fff');
+    // Eyes (2x2 black with 1x1 white highlight top-left)
+    npx(6, -3, 2, 2, '#000');
+    npx(6, -3, 1, 1, '#fff');
+    npx(10, -3, 2, 2, '#000');
+    npx(10, -3, 1, 1, '#fff');
 
-    // Mouth (closed smile like original)
-    npx(8, 1, 1, 1, '#666');
-    npx(9, 1, 1, 1, '#666');
-    npx(7, 0, 1, 1, '#666');
-    npx(10, 0, 1, 1, '#666');
+    // Cat mouth (:3 shape - two bumps)
+    npx(8, 0, 1, 1, '#666'); // center nose
+    npx(7, 1, 1, 1, '#666'); // left curve down
+    npx(8, 2, 1, 1, '#666'); // left curve bottom
+    npx(9, 1, 1, 1, '#666'); // middle dip
+    npx(10, 2, 1, 1, '#666'); // right curve bottom
+    npx(11, 1, 1, 1, '#666'); // right curve down
 
     // Cheeks
-    npx(6, 0, 1, 1, '#ff99aa');
-    npx(11, 0, 1, 1, '#ff99aa');
+    npx(5, 1, 1, 1, '#ff99aa');
+    npx(12, 1, 1, 1, '#ff99aa');
 
     // === FEET ===
     const f = Math.floor(frameCount / 6) % 2;
