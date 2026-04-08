@@ -652,36 +652,56 @@ function drawBird() {
     npx(0, 2, 1, 1, '#ff5577');
     npx(3, 0, 1, 1, '#5599ff');
 
-    // === CAT HEAD ===
-    npx(5, -5, 8, 9, '#999');  // head fill (no outline box, just grey)
+    // === CAT HEAD (wide rounded shape with outline) ===
+    // Head shape: wider at top, narrower at jaw
+    npx(5, -4, 10, 7, '#999');   // main block
+    npx(6, -5, 8, 1, '#999');    // top wider
+    npx(6, 3, 8, 1, '#999');     // bottom
+    // Dark outline
+    npx(6, -5, 8, 1, '#555');    // top edge
+    npx(5, -4, 1, 7, '#555');    // left edge
+    npx(14, -4, 1, 7, '#555');   // right edge
+    npx(6, 3, 8, 1, '#555');     // bottom edge
 
-    // Left ear (top-left of head)
-    npx(5, -8, 2, 3, '#999');
-    npx(5, -9, 1, 1, '#999');
-    npx(6, -7, 1, 1, '#ff99aa'); // inner
+    // Left ear (tall pointed triangle)
+    npx(5, -7, 3, 3, '#999');
+    npx(6, -8, 1, 1, '#999');
+    // Ear outline
+    npx(5, -7, 1, 3, '#555');
+    npx(6, -8, 1, 1, '#555');
+    npx(5, -7, 3, 1, '#555');
+    // Inner ear
+    npx(6, -6, 1, 1, '#ff99aa');
+    npx(7, -6, 1, 1, '#ff99aa');
 
-    // Right ear (top-right of head)
-    npx(10, -8, 2, 3, '#999');
-    npx(11, -9, 1, 1, '#999');
-    npx(10, -7, 1, 1, '#ff99aa'); // inner
+    // Right ear (tall pointed triangle)
+    npx(12, -7, 3, 3, '#999');
+    npx(13, -8, 1, 1, '#999');
+    // Ear outline
+    npx(14, -7, 1, 3, '#555');
+    npx(13, -8, 1, 1, '#555');
+    npx(12, -7, 3, 1, '#555');
+    // Inner ear
+    npx(12, -6, 1, 1, '#ff99aa');
+    npx(13, -6, 1, 1, '#ff99aa');
 
-    // Eyes (2x2 black with 1x1 white highlight top-left)
-    npx(6, -3, 2, 2, '#000');
-    npx(6, -3, 1, 1, '#fff');
-    npx(10, -3, 2, 2, '#000');
-    npx(10, -3, 1, 1, '#fff');
+    // Eyes (2x2 with white highlight, wider apart)
+    npx(7, -2, 2, 2, '#000');
+    npx(7, -2, 1, 1, '#fff');
+    npx(11, -2, 2, 2, '#000');
+    npx(11, -2, 1, 1, '#fff');
 
-    // Cat mouth (:3 shape - two bumps)
-    npx(8, 0, 1, 1, '#666'); // center nose
-    npx(7, 1, 1, 1, '#666'); // left curve down
-    npx(8, 2, 1, 1, '#666'); // left curve bottom
-    npx(9, 1, 1, 1, '#666'); // middle dip
-    npx(10, 2, 1, 1, '#666'); // right curve bottom
-    npx(11, 1, 1, 1, '#666'); // right curve down
+    // Mouth (:3 cat smile, wider)
+    npx(9, 0, 2, 1, '#555');     // nose
+    npx(8, 1, 1, 1, '#555');     // left down
+    npx(9, 2, 1, 1, '#555');     // left bottom
+    npx(10, 1, 1, 1, '#555');    // center dip
+    npx(11, 2, 1, 1, '#555');    // right bottom
+    npx(12, 1, 1, 1, '#555');    // right down
 
     // Cheeks
-    npx(5, 1, 1, 1, '#ff99aa');
-    npx(12, 1, 1, 1, '#ff99aa');
+    npx(6, 0, 1, 1, '#ff99aa');
+    npx(13, 0, 1, 1, '#ff99aa');
 
     // === FEET ===
     const f = Math.floor(frameCount / 6) % 2;
