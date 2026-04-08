@@ -354,9 +354,24 @@ function jump() {
   }
 }
 document.addEventListener('keydown', e => { if (e.code === 'Space' || e.code === 'ArrowUp') { e.preventDefault(); if (controlsDiv.style.display === 'none') jump(); }});
+// Secret code: tap 5 times fast on ready screen to unlock 1000 score
+let secretTaps = 0;
+let secretTimer = 0;
+function checkSecret() {
+  if (gameState !== 'ready') { secretTaps = 0; return; }
+  secretTaps++;
+  clearTimeout(secretTimer);
+  secretTimer = setTimeout(() => { secretTaps = 0; }, 1500);
+  if (secretTaps >= 5) {
+    bestScore = 1000;
+    localStorage.setItem('flappyBest', '1000');
+    secretTaps = 0;
+    refreshSkinButtons();
+  }
+}
 let lastTouchTime = 0;
-canvas.addEventListener('touchstart', e => { e.preventDefault(); lastTouchTime = Date.now(); jump(); }, { passive: false });
-canvas.addEventListener('click', () => { if (Date.now() - lastTouchTime > 300) jump(); });
+canvas.addEventListener('touchstart', e => { e.preventDefault(); lastTouchTime = Date.now(); checkSecret(); jump(); }, { passive: false });
+canvas.addEventListener('click', () => { if (Date.now() - lastTouchTime > 300) { checkSecret(); jump(); } });
 
 function update() {
   frameCount++;
