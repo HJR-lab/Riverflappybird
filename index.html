@@ -270,12 +270,10 @@ localStorage.removeItem('flappyGrant200');
 localStorage.removeItem('flappyScoreReset1');
 localStorage.removeItem('flappyScoreReset2');
 const savedScore = parseInt(localStorage.getItem('flappyBest') || '0');
-// One-time grant for owner only
-if (!localStorage.getItem('flappyOwnerGrant1000')) {
-  localStorage.setItem('flappyBest', '1000');
-  localStorage.setItem('flappyOwnerGrant1000', '1');
-}
-if (savedScore >= 200 && !localStorage.getItem('flappyOwnerGrant1000')) {
+// Reset any score >= 200 (illegitimate grants) unless owner flag is set
+if (savedScore >= 200 && localStorage.getItem('flappyOwnerGrant1000')) {
+  // Owner keeps their score
+} else if (savedScore >= 200) {
   localStorage.setItem('flappyBest', '0');
 }
 bestScore = parseInt(localStorage.getItem('flappyBest') || '0');
