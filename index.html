@@ -282,7 +282,7 @@ for (let i = 0; i < 25; i++) {
 }
 
 const buildings = [];
-for (let i = 0; i < 14; i++) {
+for (let i = 0; i < 8; i++) {
   const bw = 12 + Math.floor(bgRand() * 14);
   const bh = 25 + Math.floor(bgRand() * 50);
   buildings.push({
@@ -295,7 +295,7 @@ for (let i = 0; i < 14; i++) {
 }
 
 const bushes = [];
-for (let i = 0; i < 10; i++) {
+for (let i = 0; i < 6; i++) {
   bushes.push({
     x: i * 45 + Math.floor(bgRand() * 20),
     w: 14 + Math.floor(bgRand() * 12),
@@ -443,18 +443,46 @@ function drawSun() {
   px(sx - 7, sy + 3, 2, 2);
 }
 
+// Pre-render static background (sky + stars + sun) once
+const bgCache = document.createElement('canvas');
+bgCache.width = W; bgCache.height = H;
+(function() {
+  const origCtx = ctx;
+  // Temporarily point ctx to bgCache for drawSky/drawStars/drawSun
+  const bc = bgCache.getContext('2d');
+  // Draw sky bands
+  const groundTop = H - GROUND_H;
+  const colors = ['#4ec0ca','#5ac8d0','#6ed4d8','#87dede','#a0e8e4','#bee8d8','#d4edcc','#e8f5e9'];
+  const bandH = Math.ceil(groundTop / colors.length);
+  for (let i = 0; i < colors.length; i++) {
+    bc.fillStyle = colors[i];
+    bc.fillRect(0, i * bandH, W, bandH + 1);
+  }
+  // Draw stars (static positions)
+  for (const s of stars) {
+    bc.fillStyle = 'rgba(255,255,255,0.5)';
+    bc.fillRect(Math.floor(s.x), Math.floor(s.y), s.size, s.size);
+  }
+  // Draw sun
+  const sx = W - 35, sy = 25;
+  bc.fillStyle = '#fff4a3';
+  bc.fillRect(sx - 6, sy - 2, 12, 4);
+  bc.fillRect(sx - 4, sy - 4, 8, 8);
+  bc.fillRect(sx - 2, sy - 6, 4, 12);
+  bc.fillStyle = '#ffe066';
+  [[sx-1,sy-8],[sx-1,sy+6],[sx-8,sy-1],[sx+6,sy-1],[sx+5,sy-5],[sx-7,sy-5],[sx+5,sy+3],[sx-7,sy+3]].forEach(([x,y]) => bc.fillRect(x,y,2,2));
+})();
+
 function drawHills() {
   const offset = (frameCount * 0.2) % W;
   const groundTop = H - GROUND_H;
   for (const h of hills) {
     ctx.fillStyle = h.color;
     const cx = ((h.x - offset) % (W + h.w) + W + h.w) % (W + h.w) - h.w / 2;
-    // Pixel-art hill: stacked rectangles
-    for (let row = 0; row < h.h; row++) {
-      const ratio = row / h.h;
-      const rowW = h.w * (1 - ratio * ratio);
-      px(cx + (h.w - rowW) / 2, groundTop - row, rowW, 1);
-    }
+    // Simplified hill: 3 stacked rectangles instead of per-row
+    px(cx + h.w * 0.1, groundTop - h.h, h.w * 0.8, h.h);
+    px(cx + h.w * 0.02, groundTop - h.h * 0.6, h.w * 0.96, h.h * 0.6);
+    px(cx, groundTop - h.h * 0.3, h.w, h.h * 0.3);
   }
 }
 
@@ -795,10 +823,8 @@ function drawGameOver() {
 }
 
 function draw() {
-  ctx.clearRect(0, 0, W, H);
-  drawSky();
-  drawStars();
-  drawSun();
+  // Blit cached static background (sky + stars + sun) in one call
+  ctx.drawImage(bgCache, 0, 0);
   drawClouds();
   drawHills();
   drawCityscape();
