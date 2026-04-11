@@ -97,8 +97,8 @@ canvas {
 <body>
 <button id="toggleControls">Settings</button>
 <div id="controls" style="display:none;">
-  <label>Gravity: <input type="range" id="gravitySlider" min="0.05" max="1.50" step="0.01" value="1.00"> <span id="gravityVal">1.00</span></label>
-  <label>Jump: <input type="range" id="jumpSlider" min="-10.00" max="-1.00" step="0.1" value="-7.00"> <span id="jumpVal">-7.00</span></label>
+  <label>Gravity: <input type="range" id="gravitySlider" min="0.05" max="1.00" step="0.01" value="0.40"> <span id="gravityVal">0.40</span></label>
+  <label>Jump: <input type="range" id="jumpSlider" min="-10.00" max="-1.00" step="0.1" value="-6.00"> <span id="jumpVal">-6.00</span></label>
   <div style="margin-top:6px;font-size:13px;color:#ccc;">Skin:</div>
   <div id="skinSelector"></div>
   <button id="closeControls" style="margin-top:8px;background:#555;color:#fff;border:none;border-radius:4px;padding:4px 10px;cursor:pointer;">Close</button>
@@ -124,8 +124,8 @@ const W = PW;
 const H = PH;
 
 let bird, pipes, score, bestScore, gameState, frameCount, groundX, scoreFlash;
-let GRAVITY = 1.00;
-let JUMP = -7.00;
+let GRAVITY = 0.40;
+let JUMP = -6.00;
 
 // Slider controls
 const gravitySlider = document.getElementById('gravitySlider');
