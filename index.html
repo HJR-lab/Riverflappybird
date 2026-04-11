@@ -280,17 +280,17 @@ function drawSkinPreview(skinIdx, cvs) {
   }
 }
 
+const skinButtonCache = [];
 function refreshSkinButtons() {
-  const btns = skinSelector.querySelectorAll('.skin-btn');
-  btns.forEach((btn, i) => {
-    const cvs = btn.querySelector('canvas');
-    drawSkinPreview(i, cvs);
-    if (!isSkinUnlocked(i) && btn.classList.contains('active')) {
-      btn.classList.remove('active');
+  for (let i = 0; i < skinButtonCache.length; i++) {
+    const entry = skinButtonCache[i];
+    drawSkinPreview(i, entry.canvas);
+    if (!isSkinUnlocked(i) && entry.btn.classList.contains('active')) {
+      entry.btn.classList.remove('active');
       currentSkin = 0;
-      btns[0].classList.add('active');
+      skinButtonCache[0].btn.classList.add('active');
     }
-  });
+  }
 }
 
 SKINS.forEach((s, i) => {
@@ -304,11 +304,12 @@ SKINS.forEach((s, i) => {
     e.stopPropagation();
     if (!isSkinUnlocked(i)) return;
     currentSkin = i;
-    skinSelector.querySelectorAll('.skin-btn').forEach(b => b.classList.remove('active'));
+    for (const entry of skinButtonCache) entry.btn.classList.remove('active');
     btn.classList.add('active');
   });
   btn.addEventListener('touchstart', (e) => e.stopPropagation());
   skinSelector.appendChild(btn);
+  skinButtonCache.push({ btn, canvas: cvs });
 });
 const PIPE_SPEED = 1.3;
 const PIPE_GAP = 75;
@@ -434,11 +435,11 @@ function update() {
       p.scored = true;
       score++;
       scoreFlash = 10;
-      // Live high-score + skin unlock: update immediately when passing pipe
+      // Live high-score: just update variable and save. Skin previews
+      // refresh only on death to avoid lag during gameplay.
       if (score > bestScore) {
         bestScore = score;
         localStorage.setItem('flappyBest', String(bestScore));
-        refreshSkinButtons();
       }
     }
     if (p.x + PIPE_WIDTH < -10) pipes.splice(i, 1);
@@ -459,13 +460,8 @@ function update() {
 function die() {
   gameState = 'dead';
   frameCount = 0;
-  // bestScore already updated live in update() when passing pipes,
-  // but keep this as a safety net
-  if (score > bestScore) {
-    bestScore = score;
-    localStorage.setItem('flappyBest', String(bestScore));
-    refreshSkinButtons();
-  }
+  // bestScore already updated live when passing pipes
+  refreshSkinButtons();
 }
 
 // Pre-rendered sky + stars + sun (drawn once, blitted each frame)
