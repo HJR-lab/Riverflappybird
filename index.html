@@ -434,6 +434,12 @@ function update() {
       p.scored = true;
       score++;
       scoreFlash = 10;
+      // Live high-score + skin unlock: update immediately when passing pipe
+      if (score > bestScore) {
+        bestScore = score;
+        localStorage.setItem('flappyBest', String(bestScore));
+        refreshSkinButtons();
+      }
     }
     if (p.x + PIPE_WIDTH < -10) pipes.splice(i, 1);
   }
@@ -453,11 +459,13 @@ function update() {
 function die() {
   gameState = 'dead';
   frameCount = 0;
+  // bestScore already updated live in update() when passing pipes,
+  // but keep this as a safety net
   if (score > bestScore) {
     bestScore = score;
     localStorage.setItem('flappyBest', String(bestScore));
+    refreshSkinButtons();
   }
-  refreshSkinButtons();
 }
 
 // Pre-rendered sky + stars + sun (drawn once, blitted each frame)
