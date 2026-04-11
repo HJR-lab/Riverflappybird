@@ -97,8 +97,8 @@ canvas {
 <body>
 <button id="toggleControls">Settings</button>
 <div id="controls" style="display:none;">
-  <label>Gravity: <input type="range" id="gravitySlider" min="0.05" max="0.60" step="0.01" value="0.25"> <span id="gravityVal">0.25</span></label>
-  <label>Jump: <input type="range" id="jumpSlider" min="-8.00" max="-1.00" step="0.1" value="-3.00"> <span id="jumpVal">-3.00</span></label>
+  <label>Gravity: <input type="range" id="gravitySlider" min="0.05" max="0.60" step="0.01" value="0.40"> <span id="gravityVal">0.40</span></label>
+  <label>Jump: <input type="range" id="jumpSlider" min="-8.00" max="-1.00" step="0.1" value="-5.50"> <span id="jumpVal">-5.50</span></label>
   <div style="margin-top:6px;font-size:13px;color:#ccc;">Skin:</div>
   <div id="skinSelector"></div>
   <button id="closeControls" style="margin-top:8px;background:#555;color:#fff;border:none;border-radius:4px;padding:4px 10px;cursor:pointer;">Close</button>
@@ -124,8 +124,8 @@ const W = PW;
 const H = PH;
 
 let bird, pipes, score, bestScore, gameState, frameCount, groundX, scoreFlash;
-let GRAVITY = 0.25;
-let JUMP = -3.00;
+let GRAVITY = 0.40;
+let JUMP = -5.50;
 
 // Slider controls
 const gravitySlider = document.getElementById('gravitySlider');
@@ -845,42 +845,48 @@ function drawBird() {
   dc.restore();
 }
 
+// Pre-render ground texture strip (wide enough to scroll seamlessly)
+const GROUND_STRIP_W = W + 72; // multiple of 24, 18, 12, 6
+const groundCache = document.createElement('canvas');
+groundCache.width = GROUND_STRIP_W;
+groundCache.height = GROUND_H;
+(function buildGroundCache() {
+  const gc = groundCache.getContext('2d');
+  const gw = GROUND_STRIP_W;
+  // Green top strip
+  gc.fillStyle = '#5cb85c';
+  gc.fillRect(0, 0, gw, 4);
+  gc.fillStyle = '#4a9e4a';
+  gc.fillRect(0, 4, gw, 2);
+  // Grass highlights
+  gc.fillStyle = '#6ed66e';
+  for (let x = 0; x < gw; x += 6) gc.fillRect(x, 0, 3, 2);
+  // Sandy base
+  gc.fillStyle = '#d4a653';
+  gc.fillRect(0, 6, gw, GROUND_H - 6);
+  // Dirt pattern
+  gc.fillStyle = '#c49640';
+  for (let x = 0; x < gw; x += 12) {
+    gc.fillRect(x, 10, 6, 2);
+    gc.fillRect(x + 6, 18, 6, 2);
+    gc.fillRect(x + 3, 26, 4, 2);
+  }
+  gc.fillStyle = '#b08530';
+  for (let x = 0; x < gw; x += 18) {
+    gc.fillRect(x + 2, 14, 3, 2);
+    gc.fillRect(x + 10, 22, 2, 2);
+  }
+  gc.fillStyle = '#bfa050';
+  for (let x = 0; x < gw; x += 24) {
+    gc.fillRect(x + 5, 30, 2, 1);
+    gc.fillRect(x + 15, 34, 1, 1);
+  }
+})();
+
 function drawGround() {
   const groundTop = H - GROUND_H;
-  // Green top strip
-  ctx.fillStyle = '#5cb85c';
-  ctx.fillRect(0, groundTop, W, 4);
-  // Darker green edge
-  ctx.fillStyle = '#4a9e4a';
-  ctx.fillRect(0, groundTop + 4, W, 2);
-  // Light green grass highlights
-  const gx = Math.floor(groundX);
-  ctx.fillStyle = '#6ed66e';
-  for (let x = ((gx % 6) + 6) % 6 - 6; x < W; x += 6) {
-    px(x, groundTop, 3, 2);
-  }
-  // Sandy ground
-  ctx.fillStyle = '#d4a653';
-  ctx.fillRect(0, groundTop + 6, W, GROUND_H - 6);
-  // Dirt pattern
-  ctx.fillStyle = '#c49640';
-  for (let x = ((gx % 12) + 12) % 12 - 12; x < W + 12; x += 12) {
-    px(x, groundTop + 10, 6, 2);
-    px(x + 6, groundTop + 18, 6, 2);
-    px(x + 3, groundTop + 26, 4, 2);
-  }
-  // Dark dirt spots
-  ctx.fillStyle = '#b08530';
-  for (let x = ((gx % 18) + 18) % 18 - 18; x < W + 18; x += 18) {
-    px(x + 2, groundTop + 14, 3, 2);
-    px(x + 10, groundTop + 22, 2, 2);
-  }
-  // Pebbles
-  ctx.fillStyle = '#bfa050';
-  for (let x = ((gx % 24) + 24) % 24 - 24; x < W + 24; x += 24) {
-    px(x + 5, groundTop + 30, 2, 1);
-    px(x + 15, groundTop + 34, 1, 1);
-  }
+  const offset = ((groundX % 72) + 72) % 72;
+  ctx.drawImage(groundCache, -Math.floor(offset), groundTop);
 }
 
 // All text drawing uses displayCtx (full resolution) for crisp readability
