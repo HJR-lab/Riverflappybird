@@ -509,55 +509,72 @@ function drawHills() {
   }
 }
 
-function drawCityscape() {
-  const offset = (frameCount * 0.3) % (W + 100);
+// Pre-render cityscape to a wide strip canvas
+const CITY_W = 420; // wider than screen so it wraps seamlessly
+const cityCache = document.createElement('canvas');
+cityCache.width = CITY_W;
+cityCache.height = H - GROUND_H;
+(function buildCityCache() {
+  const cc = cityCache.getContext('2d');
   const groundTop = H - GROUND_H;
   for (const b of buildings) {
-    const bx = ((b.x - offset) % (W + 60) + W + 60) % (W + 60) - 30;
-    ctx.fillStyle = b.color;
-    px(bx, groundTop - b.h, b.w, b.h);
-    // Dark roof edge
-    ctx.fillStyle = '#1d3a30';
-    px(bx, groundTop - b.h, b.w, 1);
-    px(bx, groundTop - b.h, 1, b.h);
-    px(bx + b.w - 1, groundTop - b.h, 1, b.h);
-    // Windows
-    ctx.fillStyle = '#ffe082';
+    const bx = b.x;
+    cc.fillStyle = b.color;
+    cc.fillRect(bx, groundTop - b.h, b.w, b.h);
+    cc.fillStyle = '#1d3a30';
+    cc.fillRect(bx, groundTop - b.h, b.w, 1);
+    cc.fillRect(bx, groundTop - b.h, 1, b.h);
+    cc.fillRect(bx + b.w - 1, groundTop - b.h, 1, b.h);
     const winW = 2, winH = 2, winGap = 4;
     const cols = Math.min(b.windows, Math.floor((b.w - 4) / winGap));
     const rows = b.windowRows;
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
         const lit = ((b.x * 7 + r * 3 + c * 11) % 5) > 1;
-        ctx.fillStyle = lit ? '#ffe082' : '#2a5548';
-        px(bx + 3 + c * winGap, groundTop - b.h + 4 + r * (winH + 3), winW, winH);
+        cc.fillStyle = lit ? '#ffe082' : '#2a5548';
+        cc.fillRect(bx + 3 + c * winGap, groundTop - b.h + 4 + r * (winH + 3), winW, winH);
       }
     }
   }
+})();
+
+function drawCityscape() {
+  const offset = (frameCount * 0.3) % CITY_W;
+  // Draw twice for seamless wrap
+  ctx.drawImage(cityCache, -Math.floor(offset), 0);
+  ctx.drawImage(cityCache, -Math.floor(offset) + CITY_W, 0);
 }
 
-function drawBushes() {
-  const offset = (frameCount * 0.6) % (W + 80);
+// Pre-render bushes to a wide strip canvas
+const BUSH_W = 460;
+const bushCache = document.createElement('canvas');
+bushCache.width = BUSH_W;
+bushCache.height = H - GROUND_H;
+(function buildBushCache() {
+  const bc = bushCache.getContext('2d');
   const groundTop = H - GROUND_H;
   for (const b of bushes) {
-    const bx = ((b.x - offset) % (W + 80) + W + 80) % (W + 80) - 40;
-    ctx.fillStyle = b.color;
-    // Pixel bush shape
-    px(bx + 2, groundTop - b.h, b.w - 4, b.h);
-    px(bx, groundTop - b.h + 2, b.w, b.h - 2);
-    px(bx + 1, groundTop - b.h + 1, b.w - 2, b.h - 1);
-    // Highlight
-    ctx.fillStyle = '#6bc45e';
-    px(bx + 3, groundTop - b.h + 1, b.w - 8, 1);
-    // Berries
-    ctx.fillStyle = '#e84430';
-    px(bx + 3, groundTop - b.h + 3, 2, 2);
-    px(bx + b.w - 6, groundTop - b.h + 2, 2, 2);
-    if (b.w > 16) px(bx + Math.floor(b.w / 2) - 1, groundTop - b.h + 4, 2, 2);
-    ctx.fillStyle = '#c43020';
-    px(bx + 3, groundTop - b.h + 3, 1, 1);
-    px(bx + b.w - 6, groundTop - b.h + 2, 1, 1);
+    const bx = b.x;
+    bc.fillStyle = b.color;
+    bc.fillRect(bx + 2, groundTop - b.h, b.w - 4, b.h);
+    bc.fillRect(bx, groundTop - b.h + 2, b.w, b.h - 2);
+    bc.fillRect(bx + 1, groundTop - b.h + 1, b.w - 2, b.h - 1);
+    bc.fillStyle = '#6bc45e';
+    bc.fillRect(bx + 3, groundTop - b.h + 1, b.w - 8, 1);
+    bc.fillStyle = '#e84430';
+    bc.fillRect(bx + 3, groundTop - b.h + 3, 2, 2);
+    bc.fillRect(bx + b.w - 6, groundTop - b.h + 2, 2, 2);
+    if (b.w > 16) bc.fillRect(bx + Math.floor(b.w / 2) - 1, groundTop - b.h + 4, 2, 2);
+    bc.fillStyle = '#c43020';
+    bc.fillRect(bx + 3, groundTop - b.h + 3, 1, 1);
+    bc.fillRect(bx + b.w - 6, groundTop - b.h + 2, 1, 1);
   }
+})();
+
+function drawBushes() {
+  const offset = (frameCount * 0.6) % BUSH_W;
+  ctx.drawImage(bushCache, -Math.floor(offset), 0);
+  ctx.drawImage(bushCache, -Math.floor(offset) + BUSH_W, 0);
 }
 
 function drawClouds() {
