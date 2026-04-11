@@ -885,8 +885,8 @@ groundCache.height = GROUND_H;
 
 function drawGround() {
   const groundTop = H - GROUND_H;
-  const offset = ((groundX % 72) + 72) % 72;
-  ctx.drawImage(groundCache, -Math.floor(offset), groundTop);
+  // Ground is static (no scrolling)
+  ctx.drawImage(groundCache, 0, groundTop);
 }
 
 // All text drawing uses displayCtx (full resolution) for crisp readability
